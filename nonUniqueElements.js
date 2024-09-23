@@ -25,7 +25,6 @@ nonUniqueElements([10, 9, 10, 10, 9, 8]) == [10, 9, 10, 10, 9]
  */
 
 export default function nonUniqueElements(data) {
-  var result = [];
   var dict = new Map();
   for (let i = 0; i < data.length; i++) {
     if (dict.get(data[i]) === undefined) {
@@ -34,10 +33,5 @@ export default function nonUniqueElements(data) {
       dict.set(data[i], dict.get(data[i]) + 1);
     }
   }
-  for (let i = 0; i < data.length; i++) {
-    if (dict.get(data[i]) > 1) {
-      result.push(data[i]);
-    }
-  }
-  return result;
+  return data.filter(item => dict.get(item) > 1);
 }

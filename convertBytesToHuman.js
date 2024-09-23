@@ -18,32 +18,30 @@
  */
 
 export default function convertBytesToHuman(bytes) {
-  if (typeof(bytes) !== 'number' || bytes < 0) {
+  if (isNaN(bytes) || !isFinite(bytes) || typeof(bytes) !== 'number' || bytes < 0) {
     return false;
   }
-  var suffix = new Map([
-    [0, "B"],
-    [1, "KB"],
-    [2, "MB"],
-    [3, "GB"],
-    [4, "TB"],
-    [5, "PB"],
-    [6, "EB"],
-    [7, "ZB"],
-    [8, "YB"],
-    [9, "RB"],
-    [10, "QB"]
-  ]);
+  const suffix = [
+    "B",
+    "KB",
+    "MB",
+    "GB",
+    "TB",
+    "PB",
+    "EB",
+    "ZB",
+    "YB",
+    "RB",
+    "QB"
+  ];
   const DIVIDER = 1024;
 
   let sfx = 0;
   while (bytes / DIVIDER % 10 >= 1) {
+    if (sfx > 10) return false;
     sfx += 1;
     bytes /= DIVIDER;
   }
 
-  if (sfx > 10) {
-    throw new TypeError("Too Large Number");
-  }
-  return parseFloat(bytes.toFixed(2)) + " " + suffix.get(sfx);
+  return parseFloat(bytes.toFixed(2)) + " " + suffix[sfx];
 }

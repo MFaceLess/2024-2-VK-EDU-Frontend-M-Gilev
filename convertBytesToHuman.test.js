@@ -13,6 +13,15 @@ test('Возвращает false для неправильного типа да
   expect(convertBytesToHuman("string")).toBe(false);
   expect(convertBytesToHuman(-1)).toBe(false);
   expect(convertBytesToHuman()).toBe(false);
+  expect(convertBytesToHuman(1e+100)).toBe(false);
+  expect(convertBytesToHuman(NaN)).toBe(false);
+  expect(convertBytesToHuman(Infinity)).toBe(false);
+  expect(convertBytesToHuman(null)).toBe(false);
+  expect(convertBytesToHuman(function() {})).toBe(false);
+  expect(convertBytesToHuman({})).toBe(false);
+  expect(convertBytesToHuman([])).toBe(false);
+  expect(convertBytesToHuman([1, 2, 3])).toBe(false);
+  expect(convertBytesToHuman(undefined)).toBe(false);
 });
 
 test('Возвращает корректное значение для чисел', () => {
@@ -23,9 +32,4 @@ test('Возвращает корректное значение для чисе
   expect(convertBytesToHuman(0)).toBe("0 B");
   expect(convertBytesToHuman(1048576)).toBe("1 MB");
   expect(convertBytesToHuman(1073741824)).toBe("1 GB");
-});
-
-test('Возвращает исключение для больших значений', () => {
-  expect(() => convertBytesToHuman(1e+100)).toThrow(TypeError);
-  expect(() => convertBytesToHuman(1e+100)).toThrow("Too Large Number");
 });
