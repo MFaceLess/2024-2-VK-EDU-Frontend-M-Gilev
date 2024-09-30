@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="index.css">
+        <script src="index.js"></script>
+        <title>Send a message</title>
+    <link href="style.css" rel="stylesheet"></head>
+    <body>
+        <div class="header"> 
+            <a href="#1" class="back-button">
+                <img src="./img/arrow_back.svg" alt="Back"> 
+            </a>
+            <a href="#2" class="profile-link"> 
+                <img src="./img/profile-icon.png" alt="Profile" class="profile-image">
+            </a>
+            <div class="user-info">
+                <h3>User</h3>
+                <p>last seen 2 hours ago</p>
+            </div>
+            <div class="right-icons">
+                <button class="search-icon">
+                    <img src="./img/search.svg" alt="Search">
+                </button>
+                <button class="menu-icon">
+                    <img src="./img/more_vert.svg" alt="Menu">
+                </button>
+            </div>
+        </div>
+        <div class="chat-container">
+            <div class="message"></div>
+        </div>
+        <form class="form" action="/">
+            <input class="form-input" name="message-text" placeholder="Write a message..." type="text">
+            <button type="button" class="attach-button">
+                <img src="./img/attachment.svg" alt="Attach" class="attach-icon">
+            </button>
+            <input type="submit" value="Send" style="display: none;">
+        </form>
+    <script type="text/javascript" src="bundle.js"></script></body>
+</html>
