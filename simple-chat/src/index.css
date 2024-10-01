@@ -41,13 +41,15 @@ body {
     margin-right: 10px;
 }
 
-.back-button:hover img {
+.back-button:hover {
     filter: brightness(0.7);
     opacity: 0.8;
 }
 
-.profile-image {
-    margin-right: 10px;
+.profile-link {
+    margin-right: 50px;
+    margin-left: 50px;
+    transform: scale(3);
 }
 
 .user-info h3 {
@@ -79,7 +81,7 @@ body {
     transform: scale(2);
 }
 
-.right-icons button:hover img {
+.right-icons button:hover {
     filter: brightness(0.7);
     opacity: 0.8;
 }
@@ -162,7 +164,7 @@ input[type=submit] {
     transform: scale(2);
 }
 
-.attach-button:hover img, .send-button:hover img {
+.attach-button:hover, .send-button:hover {
     filter: brightness(0.1);
     opacity: 2;
 }
