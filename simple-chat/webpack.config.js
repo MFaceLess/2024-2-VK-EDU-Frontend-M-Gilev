@@ -12,11 +12,11 @@ const BUILD_PATH = path.resolve(__dirname, 'build');
 module.exports = {
     context: SRC_PATH,
     entry: {
-        index: './index.js',
+        index: ['./messanger.js', './index.js'],
     },
     output: {
         path: BUILD_PATH,
-        filename: 'bundle.js',
+        filename: '[name].bundle.js',
     },
     module: {
         strictExportPresence: true,
@@ -54,6 +54,18 @@ module.exports = {
                     },
                 ],
             },
+            {
+                test: /messanger\.css$/,
+                include: SRC_PATH,
+                use: [
+                    {
+                        loader: MiniCSSExtractPlugin.loader,
+                    },
+                    {
+                        loader: 'css-loader',
+                    },
+                ],
+            },
         ],
     },
     plugins: [
@@ -61,8 +73,12 @@ module.exports = {
             filename: 'style.css',
         }),
         new HTMLWebpackPlugin({
+            filename: 'list_of_correspondents.html',
+            template: './list_of_correspondents.html'
+        }),
+        new HTMLWebpackPlugin({
             filename: 'index.html',
             template: './index.html'
-        })
+        }),
     ]
 };

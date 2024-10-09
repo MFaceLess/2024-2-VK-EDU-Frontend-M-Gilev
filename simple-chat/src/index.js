@@ -1,6 +1,16 @@
 import './index.css';
 
 document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const user = urlParams.get('user');
+    const userInfo = document.querySelector('.user-info h3');
+
+    const userInd = new Map();
+
+    if (user) {
+        userInfo.textContent = user;
+    }
+
     const form = document.querySelector('form');
     const input = document.querySelector('.form-input');
     const chatContainer = document.querySelector('.chat-container');
@@ -10,7 +20,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const messages = JSON.parse(localStorage.getItem('messages')) || [];
         chatContainer.innerHTML = '';
         messages.forEach(message => {
-            displayMessage(message);
+            // if (message.whom === user) {
+                displayMessage(message);
+            // }
         });
     }
 
@@ -38,20 +50,42 @@ document.addEventListener('DOMContentLoaded', () => {
         const message = {
             sender: 'You',
             text: messageText,
-            time: new Date().toLocaleString(),
+            time: new Date().toLocaleTimeString(),
+            lastMessage: messageText,
+            whom: user,
         };
+
         saveMessage(message);
         displayMessage(message);
         input.value = '';
 
+        const chatInfo = {
+            lastMessage: messageText,
+            time: new Date().toLocaleTimeString(),
+            whom: user,
+            isReaded: false,
+        };
+
+        localStorage.setItem(user, JSON.stringify(chatInfo));
+
         setTimeout(() => {
             const message = {
-                sender: 'User',
+                sender: user,
                 text: 'I do not understand you(',
-                time: new Date().toLocaleString(),
+                time: new Date().toLocaleTimeString(),
+                lastMessage: 'I do not understand you(',
+                whom: user,
             };
             saveMessage(message);
             displayMessage(message);
+
+            const chatInfo = {
+                lastMessage: 'I do not understand you(',
+                time: new Date().toLocaleTimeString(),
+                whom: user,
+                isReaded: false,
+            };
+            localStorage.setItem(user, JSON.stringify(chatInfo));
         }, 1000);
     }
 
@@ -65,5 +99,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     loadMessages();
+
+    window.addEventListener('storage', function(event) {
+        loadMessages();
+    });
 });
 
