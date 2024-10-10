@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeButton = document.querySelector('.close-user-selection-button');
     const chatContainer = document.querySelector('.messages');
     
+    if (!chooseUserContainer || !startChatButton || !closeButton || !chatContainer) return;
+
     startChatButton.addEventListener('click', function() {
         chooseUserContainer.style.display = 'flex';
     });

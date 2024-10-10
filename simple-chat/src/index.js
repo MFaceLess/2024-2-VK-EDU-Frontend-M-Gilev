@@ -16,13 +16,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const chatContainer = document.querySelector('.chat-container');
     const sendMessage = document.querySelector('.send-button')
 
+    if (!form || !input || !chatContainer || !sendMessage) return;
+
     function loadMessages() {
         const messages = JSON.parse(localStorage.getItem('messages')) || [];
         chatContainer.innerHTML = '';
         messages.forEach(message => {
-            // if (message.whom === user) {
+            if (message.sender === user || (message.sender === 'You' && message.whom === user)) {
                 displayMessage(message);
-            // }
+            }
         });
     }
 
