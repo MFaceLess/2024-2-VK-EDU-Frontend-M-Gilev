@@ -163,6 +163,8 @@ body {
     text-decoration: none;
     color: #000;
     box-sizing: border-box;
+
+    word-wrap: break-word;
 }
 
 .message-link:hover {
