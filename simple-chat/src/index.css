@@ -24,6 +24,13 @@ body {
     width: 100%;
     display: inline-block;
     border: 2px solid rgba(25, 25, 25, 0.32);
+    transition: background-color 0.1s ease, box-shadow 0.1s ease, transform 0.1s ease;
+}
+
+.form:active {
+    background-color: rgba(50, 50, 50, 0.7);
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    transform: scale(1.01);
 }
 
 .header {
@@ -50,11 +57,22 @@ body {
     margin-right: 50px;
     margin-left: 50px;
     transform: scale(3);
+    transition: transform 0.5s ease;
+}
+
+.profile-link:hover {
+    transform: scale(2.1);
+}
+
+.user-info {
+    margin-right: 70px;
 }
 
 .user-info h3 {
     margin: 0 0 10px 0;
     text-align: center;
+    cursor: pointer;
+    transition: color 0.5s ease-in;
 }
 
 .user-info p {
@@ -64,9 +82,10 @@ body {
     color: #ddd;
 }
 
-.user-info {
-    margin-right: 70px;
+.user-info h3:hover {
+    color: #aaa;
 }
+
 
 .right-icons {
     display: flex;
@@ -92,8 +111,31 @@ body {
     flex-direction: column;
     height: calc(100vh - 150px);
     overflow-y: auto;
+    overflow-x: hidden;
     padding: 10px;
     background-color: #FBEEC1;
+}
+
+@keyframes slide-in-left {
+    0% {
+        opacity: 0; 
+        transform: translateX(-20px); 
+    }
+    100% {
+        opacity: 1; 
+        transform: translateX(0); 
+    }
+}
+
+@keyframes slide-in-right {
+    0% {
+        opacity: 0; 
+        transform: translateX(20px); 
+    }
+    100% {
+        opacity: 1; 
+        transform: translateX(0); 
+    }
 }
 
 .message.opponent {
@@ -109,6 +151,8 @@ body {
     max-width: 70%;
     align-self: flex-start;
     word-wrap: break-word;
+
+    animation: slide-in-left 0.5s forwards;
 }
 
 .message.you {
@@ -124,6 +168,8 @@ body {
     max-width: 70%;
     align-self: flex-end;
     word-wrap: break-word;
+
+    animation: slide-in-right 0.5s forwards;
 }
 
 .form {
