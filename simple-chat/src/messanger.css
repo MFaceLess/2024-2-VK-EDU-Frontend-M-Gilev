@@ -212,6 +212,7 @@ body {
 .message-text {
     color: #555;
     margin-top: 5px;
+    word-wrap: break-word;
 }
 
 .avatar {
@@ -221,7 +222,7 @@ body {
     margin-right: 10px;
 }
 
-.user-info {
+.user-beep {
     display: flex;
     flex-grow: 1;
 }
@@ -230,6 +231,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    word-wrap: break-word;
 }
 
 .time-text {

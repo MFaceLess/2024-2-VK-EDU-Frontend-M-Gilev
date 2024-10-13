@@ -69,6 +69,8 @@ body {
 }
 
 .user-info h3 {
+    display: flex;
+    flex-direction: column;
     margin: 0 0 10px 0;
     text-align: center;
     cursor: pointer;
