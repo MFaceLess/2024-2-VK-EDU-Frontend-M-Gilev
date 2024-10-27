@@ -1,18 +1,44 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-import searchButtonLogo from '/searchButton.svg';
-import burgerLogo from '/burger.svg';
 import startChatButtonLogo from '/startChatButton.svg';
 import closeButtonLogo from '/closeButton.svg';
 import profileLinkLogo from '/profileLink.svg';
 
-import './Messanger.css';
+// Импорт компонентов
+import { HeaderChatList } from '../../components/header';
 
-function Messanger({onUserSelect}) {
+import './index.css';
+
+const Messenger = ({onUserSelect}) => {
   const [isChatSelectionVisible, setChatSelectionVisible] = useState(false);
   const [messages, setMessages] = useState([]);
   const [friends] = useState(['User1', 'User2', 'User3', 'User4', 'User5']);
   const chatContainerRef = useRef(null);
+  const modalRef = useRef(null);
+
+  //Обработка закрытия модалки
+  useEffect(() => {
+    const clickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setChatSelectionVisible(false);
+      }
+    }
+
+    const escDown = (event) => {
+      if (event.key === 'Escape') {
+        setChatSelectionVisible(false);
+        document.activeElement.blur();
+      }
+    };
+
+    document.addEventListener('keydown', escDown);
+    document.addEventListener('mousedown', clickOutside);
+
+    return () => {
+      document.removeEventListener('keydown', escDown);
+      document.removeEventListener('mousedown', clickOutside);
+    };
+  }, [setChatSelectionVisible]);
 
   useEffect(() => {
     friends.forEach(friend => {
@@ -99,17 +125,8 @@ function Messanger({onUserSelect}) {
 
   return (
     <div className='window'>
-      <div className='header'>
-        <button className='burger'>
-            <img src={burgerLogo}/>
-        </button>
-        <div className='messanger'>
-          <h1>Messanger</h1>
-        </div>
-        <button className='search-icon'>
-            <img src={searchButtonLogo}/>
-        </button>
-      </div>
+      <HeaderChatList/>
+
       <div className='chat-container' ref={chatContainerRef}>
         <div className='messages'>
           {messages.map((msg, index) => (
@@ -133,18 +150,22 @@ function Messanger({onUserSelect}) {
         </button>
 
         {isChatSelectionVisible && (
-          <div className='users-container'>
+          <>
+          <div className='overlay'></div>
+          <div className='users-container' ref={modalRef}>
+            <div className='button-container'>
+              <button className='close-user-selection-button' onClick={() => setChatSelectionVisible(false)}>
+                <img src={closeButtonLogo}/>
+              </button>
+            </div>
             <div className='user-selection'>
               <div className='users-container-header'>
                 <h2>Выберите собеседника:</h2>
-                <button className='close-user-selection-button' onClick={() => setChatSelectionVisible(false)}>
-                  <img src={closeButtonLogo}/>
-                </button>
               </div>
               <ul id='chatList'>
                 {friends.map((friend, index) => (
-                  <li key={index}>
-                    <a href='#' onClick={() => onUserSelect(friend)}>
+                  <li key={index} onClick={() => onUserSelect(friend)}>
+                    <a href='#'>
                       <img className='user-icon' src={profileLinkLogo}/>
                       {friend}
                     </a>
@@ -153,10 +174,11 @@ function Messanger({onUserSelect}) {
               </ul>
             </div>
           </div>
+          </>
         )}
       </div>
     </div>
   );
 }
 
-export default Messanger;
+export default Messenger;

@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 
-import Messanger from './pages/Messanger'
-import Chat from './pages/Chat'
+import Messenger from './pages/messenger';
+import Chat from './pages/chat';
 
-import './App.css'
+import './App.css';
 
 
 function App() {
@@ -16,7 +16,7 @@ function App() {
   return (
     <div className='app'>
       {!currentUser ? (
-        <Messanger onUserSelect={handleUserSelect}/>
+        <Messenger onUserSelect={handleUserSelect}/>
       ) : (
         <Chat _current_user={[currentUser, handleUserSelect]}/>
       )}
