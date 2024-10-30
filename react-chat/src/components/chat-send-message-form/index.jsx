@@ -5,7 +5,7 @@ import attachButtonLogo from '/attachButton.svg'
 
 import './index.css'
 
-export const ChatSendMessageForm = ({user, setMessages}) => {
+export const ChatSendMessageForm = ({user, setMessages, id}) => {
     const [input, setInput] = useState('');
 
     const saveMessage = (message) => {
@@ -24,6 +24,7 @@ export const ChatSendMessageForm = ({user, setMessages}) => {
           time: new Date().toLocaleTimeString(),
           lastMessage: input,
           whom: user,
+          id: id,
         };
     
         saveMessage(message);
@@ -34,6 +35,7 @@ export const ChatSendMessageForm = ({user, setMessages}) => {
           time: new Date().toLocaleTimeString(),
           whom: user,
           isReaded: false,
+          id: id,
         };
     
         localStorage.setItem(user, JSON.stringify(chatInfo));
@@ -45,6 +47,7 @@ export const ChatSendMessageForm = ({user, setMessages}) => {
             time: new Date().toLocaleTimeString(),
             lastMessage: 'I do not understand you(',
             whom: user,
+            id: id,
           };
           saveMessage(reply);
           localStorage.setItem(user, JSON.stringify(reply));

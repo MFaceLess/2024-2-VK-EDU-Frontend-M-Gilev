@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 import backButtonLogo from '/backButton.svg'
 import menuButtonLogo from '/menuButton.svg'
@@ -7,13 +8,13 @@ import searchButtonLogo from '/searchButton.svg'
 
 import './HeaderChat.css'
 
-export const HeaderChat = ({user, user_handler}) => {
+export const HeaderChat = ({ user }) => {
     return (
         <header className='chat-header'>
 
-        <a href='#1' onClick={() => {user_handler(null)}} className='back-button'>
+        <Link to='/' className='back-button'>
           <img src={backButtonLogo}/>
-        </a>
+        </Link>
 
         <a href='#2' className='profile-link'>
           <img src={profileLinkLogo}/>

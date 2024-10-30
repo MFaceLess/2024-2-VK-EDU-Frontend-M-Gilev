@@ -1,14 +1,19 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 import burgerLogo from '/burger.svg';
 import searchButtonLogo from '/searchButton.svg';
 
 import './HeaderChatList.css'
 
-export const HeaderChatList = () => {
+export const HeaderChatList = ( {setBurgerMenuVisible} ) => {
+    
+    const toggleMenu = () => {
+        setBurgerMenuVisible(prevState => !prevState);
+    }
+
     return (
         <div className='messenger-header'>
-            <button className='burger'>
+            <button className='burger' onClick={toggleMenu}>
                 <img src={burgerLogo}/>
             </button>
             <div className='messenger'>

@@ -1,0 +1,26 @@
+.burger-side-menu  {
+    position: fixed;
+    height: 100%;
+    top: 0;
+    left: -30%;
+    width: 30%;
+    background-color: #eae5e5;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    transition: left 0.5s ease;
+    padding: 20px;
+    z-index: 2;
+}
+
+.burger-side-menu.visible {
+    left: 0;
+}
+
+.burger-side-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}

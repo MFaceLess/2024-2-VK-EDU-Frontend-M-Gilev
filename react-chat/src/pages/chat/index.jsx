@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { useParams } from 'react-router-dom';
 
 // Импорт компонентов
 import {ChatSendMessageForm} from '../../components/chat-send-message-form';
@@ -7,10 +8,19 @@ import {HeaderChat} from '../../components/header';
 
 import './index.css';
 
-const Chat = ({_current_user}) => {
+const Chat = () => {
+  const userDataBase = new Map([
+    ['1', 'User1'],
+    ['2', 'User2'],
+    ['3', 'User3'],
+    ['4', 'User4'],
+    ['5', 'User5'],
+  ]);
+  //ловим id пользователя
+  const { id } = useParams();
+
   //Обработчик пользователя
-  const current_user = _current_user[0];
-  const user_handler = _current_user[1];
+  const current_user = userDataBase.get(id);
 
   const [user, setUser] = useState(current_user);
   const [messages, setMessages] = useState([]);
@@ -36,7 +46,7 @@ const Chat = ({_current_user}) => {
   return (
     <div>
 
-      <HeaderChat user={user} user_handler={user_handler}/>
+      <HeaderChat user={user} />
 
       <div className='chat-container' ref={chatContainerRef}>
         {messages.map((message, index) => (
@@ -49,7 +59,7 @@ const Chat = ({_current_user}) => {
         ))}
       </div>
 
-      <ChatSendMessageForm user={current_user} setMessages={setMessages}/>
+      <ChatSendMessageForm user={current_user} setMessages={setMessages} id={id}/>
       
     </div>
   );

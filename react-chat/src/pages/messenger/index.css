@@ -250,3 +250,7 @@ body {
     margin-left: 10px;
     font-size: 14px;
 }
+
+.messenger-user-chat {
+    width: 100%;
+}
