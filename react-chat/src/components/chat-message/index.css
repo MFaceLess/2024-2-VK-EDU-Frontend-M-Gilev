@@ -1,0 +1,59 @@
+.message-text {
+    color: black;
+}
+
+@keyframes slide-in-left {
+    0% {
+        opacity: 0; 
+        transform: translateX(-20px); 
+    }
+    100% {
+        opacity: 1; 
+        transform: translateX(0); 
+    }
+}
+
+@keyframes slide-in-right {
+    0% {
+        opacity: 0; 
+        transform: translateX(20px); 
+    }
+    100% {
+        opacity: 1; 
+        transform: translateX(0); 
+    }
+}
+
+.message.you {
+    color: #8D8741;
+    border: 1px solid;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    padding: 4px;
+
+    background-color: #DAAD86;
+    border-radius: 10px;
+    padding: 10px;
+    max-width: 70%;
+    align-self: flex-end;
+    word-wrap: break-word;
+
+    animation: slide-in-right 0.5s forwards;
+}
+
+.message.opponent {
+    color: #8D8741;
+    border: 1px solid;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    padding: 4px;
+
+    background-color: #DAAD86;
+    border-radius: 10px;
+    padding: 10px;
+    max-width: 70%;
+    align-self: flex-start;
+    word-wrap: break-word;
+
+    animation: slide-in-left 0.5s forwards;
+}
