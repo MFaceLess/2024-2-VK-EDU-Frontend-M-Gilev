@@ -4,18 +4,18 @@ import { Link } from 'react-router-dom';
 import okLogo from '/ok.svg';
 import backButtonLogo from '/backButton.svg';
 
-import './HeaderChatList.css'
+import './HeaderProfilePage.css'
 
-export const HeaderProfilePage = () => {
+export const HeaderProfilePage = ( {onSubmit} ) => {
     return (
-        <div className='messenger-header'>
-            <Link to={'/'} className='burger'>
+        <div className='profile-page-header'>
+            <Link to={'/'} className='profile-page-back-button'>
                 <img src={backButtonLogo}/>
             </Link>
-            <div className='messenger'>
+            <div className='profile-page-title'>
             <h1>Edit Profile</h1>
             </div>
-            <button className='search-icon'>
+            <button className='page-profile-okIcon' onClick={onSubmit}>
                 <img src={okLogo}/>
             </button>
         </div>

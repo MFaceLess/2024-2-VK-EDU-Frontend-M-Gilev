@@ -16,9 +16,9 @@ export const HeaderChat = ({ user }) => {
           <img src={backButtonLogo}/>
         </Link>
 
-        <a href='#2' className='profile-link'>
+        <div className='profile-link'>
           <img src={profileLinkLogo}/>
-        </a>
+        </div>
 
         <div className='user-info'>
           <h3>{user || 'User'}</h3>

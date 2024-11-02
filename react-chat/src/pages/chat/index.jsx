@@ -44,7 +44,7 @@ const Chat = () => {
   };
 
   return (
-    <div>
+    <div className='chat-page'>
 
       <HeaderChat user={user} />
 

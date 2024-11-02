@@ -5,7 +5,7 @@ import './index.css'
 
 export const SideBurgerMenu = ( {isBurgerMenuVisible, setBurgerMenuVisible} ) => {
     const modalRef = useRef(null);
-    const [burgerMenuItems, setBurgerMenuItems] = useState(['Страница профиля']);
+    const [burgerMenuItems, setBurgerMenuItems] = useState(['Профиль']);
 
     useEffect(() => {
         const clickOutside = (event) => {

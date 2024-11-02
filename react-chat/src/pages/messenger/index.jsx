@@ -2,12 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 import startChatButtonLogo from '/startChatButton.svg';
-import closeButtonLogo from '/closeButton.svg';
 import profileLinkLogo from '/profileLink.svg';
 
 // Импорт компонентов
 import { HeaderChatList } from '../../components/header';
 import { SideBurgerMenu } from '../../components/burger-side-menu';
+import { FriendList } from '../../components/friends-list';
 
 import './index.css';
 
@@ -153,31 +153,8 @@ const Messenger = () => {
         </button>
 
         {isChatSelectionVisible && (
-          <>
-          <div className='overlay'></div>
-          <div className='users-container' ref={modalRef}>
-            <div className='button-container'>
-              <button className='close-user-selection-button' onClick={() => setChatSelectionVisible(false)}>
-                <img src={closeButtonLogo}/>
-              </button>
-            </div>
-            <div className='user-selection'>
-              <div className='users-container-header'>
-                <h2>Выберите собеседника:</h2>
-              </div>
-              <ul id='chatList'>
-                {friends.map((friend) => (
-                  <li key={friend.id}>
-                    <Link to={`/chat/${friend.id}`} className='messenger-user-chat'>
-                      <img className='user-icon' src={profileLinkLogo}/>
-                      {friend.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-          </>
+          <FriendList modalRef={modalRef} setChatSelectionVisible={setChatSelectionVisible}
+          friends={friends}/>
         )}
       </div>
     </div>

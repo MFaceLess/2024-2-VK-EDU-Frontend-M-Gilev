@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useRef } from 'react'
 
 import profileLinkLogo from '/profileLink.svg';
 
@@ -9,16 +9,22 @@ import { HeaderProfilePage } from '../../components/header';
 import './index.css';
 
 const ProfilePage = () => {
-  
+  const formRef = useRef(null);
+
+  const handleFormSubmit = () => {
+    if (formRef.current) {
+      formRef.current.requestSubmit();
+    }
+  };
 
   return (
     <div className='profile-page-wrapper'>
 
-      <HeaderProfilePage />
+      <HeaderProfilePage onSubmit={handleFormSubmit}/>
 
       <div className='edit-profile-container'>
         <img className='avatar' src={profileLinkLogo}/>
-        <ProfilePageForm />
+        <ProfilePageForm ref={formRef}/>
       </div>
       
     </div>
