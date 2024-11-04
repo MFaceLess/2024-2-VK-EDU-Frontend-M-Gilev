@@ -1,7 +1,6 @@
 .profile-page-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     background-color: #659DBD;
     color: white;
     padding: 8px 15px;

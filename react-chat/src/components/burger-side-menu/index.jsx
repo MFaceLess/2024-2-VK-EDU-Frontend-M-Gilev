@@ -5,7 +5,10 @@ import './index.css'
 
 export const SideBurgerMenu = ( {isBurgerMenuVisible, setBurgerMenuVisible} ) => {
     const modalRef = useRef(null);
-    const [burgerMenuItems, setBurgerMenuItems] = useState(['Профиль']);
+    const [burgerMenuItems, setBurgerMenuItems] = useState([
+      {label: 'Авторизация', path: '/auth'},
+      {label: 'Профиль', path: '/profile-page'}
+    ]);
 
     useEffect(() => {
         const clickOutside = (event) => {
@@ -40,9 +43,9 @@ export const SideBurgerMenu = ( {isBurgerMenuVisible, setBurgerMenuVisible} ) =>
                 className={`burger-side-menu ${isBurgerMenuVisible ? 'visible' : ''}`}>
                 <ul>
                     {burgerMenuItems.map((menuItem, index) => (
-                        <Link to={'/profile-page'} key={index}>
+                        <Link to={menuItem.path} key={index}>
                             <li>
-                                {menuItem}
+                                {menuItem.label}
                             </li>
                         </Link>
                     ))}

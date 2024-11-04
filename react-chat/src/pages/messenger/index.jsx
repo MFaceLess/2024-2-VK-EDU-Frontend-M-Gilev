@@ -88,7 +88,6 @@ const Messenger = () => {
 
   const saveMessage = message => {
     const storedMessages = JSON.parse(localStorage.getItem('messages')) || [];
-    console.log(storedMessages);
     storedMessages.push(message);
     localStorage.setItem('messages', JSON.stringify(storedMessages));
   };
