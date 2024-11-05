@@ -1,18 +1,28 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 
 import startChatButtonLogo from '/startChatButton.svg';
-import closeButtonLogo from '/closeButton.svg';
 import profileLinkLogo from '/profileLink.svg';
 
 // Импорт компонентов
 import { HeaderChatList } from '../../components/header';
+import { SideBurgerMenu } from '../../components/burger-side-menu';
+import { FriendList } from '../../components/friends-list';
 
 import './index.css';
 
-const Messenger = ({onUserSelect}) => {
+const Messenger = () => {
+  const [isBurgerMenuVisible, setBurgerMenuVisible] = useState(false);
+
   const [isChatSelectionVisible, setChatSelectionVisible] = useState(false);
   const [messages, setMessages] = useState([]);
-  const [friends] = useState(['User1', 'User2', 'User3', 'User4', 'User5']);
+  const [friends] = useState([
+    {id: 1, name: 'User1'},
+    {id: 2, name: 'User2'},
+    {id: 3, name: 'User3'},
+    {id: 4, name: 'User4'},
+    {id: 5, name: 'User5'},
+  ]);
   const chatContainerRef = useRef(null);
   const modalRef = useRef(null);
 
@@ -42,7 +52,7 @@ const Messenger = ({onUserSelect}) => {
 
   useEffect(() => {
     friends.forEach(friend => {
-      const storedFriendData = localStorage.getItem(friend);
+      const storedFriendData = localStorage.getItem(friend.name);
       if (storedFriendData) {
         const parsedData = JSON.parse(storedFriendData);
         if (parsedData && parsedData.lastMessage) {
@@ -50,21 +60,6 @@ const Messenger = ({onUserSelect}) => {
         }
       }
     });
-
-    const handleStorageChange = event => {
-      if (friends.includes(event.key)) {
-        const updatedFriend = JSON.parse(localStorage.getItem(event.key));
-        if (updatedFriend && updatedFriend.lastMessage) {
-          updateChat(updatedFriend);
-        }
-      }
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
   }, [friends]);
 
   const displayMessages = friend => {
@@ -81,7 +76,8 @@ const Messenger = ({onUserSelect}) => {
         whom: friend.whom,
         time: friend.time,
         lastMessage: truncatedMessage,
-        badge: badge
+        badge: badge,
+        id: friend.id,
       }
     ]);
 
@@ -105,12 +101,14 @@ const Messenger = ({onUserSelect}) => {
     setTimeout(() => {
       const chatInfo = {
         lastMessage: 'Does it work?',
+        id: 4,
         time: new Date().toLocaleTimeString(),
         whom: 'User4',
         isReaded: false,
       };
       const message = {
         sender: 'User4',
+        id: 4,
         text: 'Does it work?',
         time: new Date().toLocaleTimeString(),
         lastMessage: 'Does it work?',
@@ -124,13 +122,18 @@ const Messenger = ({onUserSelect}) => {
   }, []);
 
   return (
+
+    <>
+    <SideBurgerMenu isBurgerMenuVisible={isBurgerMenuVisible} setBurgerMenuVisible={setBurgerMenuVisible}/>
+    
     <div className='window'>
-      <HeaderChatList/>
+
+      <HeaderChatList setBurgerMenuVisible={setBurgerMenuVisible}/>
 
       <div className='chat-container' ref={chatContainerRef}>
         <div className='messages'>
           {messages.map((msg, index) => (
-            <a href='#' onClick={() => onUserSelect(msg.whom)} className='message-link' key={index}>
+            <Link to={`/chat/${msg.id}`} className='message-link' key={index}>
               <div className='user-beep'>
                 <img className='avatar' src={profileLinkLogo}/>
                 <div className='user-details'>
@@ -141,7 +144,7 @@ const Messenger = ({onUserSelect}) => {
                 </div>
               </div>
               <div className='badge'>{msg.badge}</div>
-            </a>
+            </Link>
           ))}
         </div>
 
@@ -150,34 +153,12 @@ const Messenger = ({onUserSelect}) => {
         </button>
 
         {isChatSelectionVisible && (
-          <>
-          <div className='overlay'></div>
-          <div className='users-container' ref={modalRef}>
-            <div className='button-container'>
-              <button className='close-user-selection-button' onClick={() => setChatSelectionVisible(false)}>
-                <img src={closeButtonLogo}/>
-              </button>
-            </div>
-            <div className='user-selection'>
-              <div className='users-container-header'>
-                <h2>Выберите собеседника:</h2>
-              </div>
-              <ul id='chatList'>
-                {friends.map((friend, index) => (
-                  <li key={index} onClick={() => onUserSelect(friend)}>
-                    <a href='#'>
-                      <img className='user-icon' src={profileLinkLogo}/>
-                      {friend}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-          </>
+          <FriendList modalRef={modalRef} setChatSelectionVisible={setChatSelectionVisible}
+          friends={friends}/>
         )}
       </div>
     </div>
+    </>
   );
 }
 

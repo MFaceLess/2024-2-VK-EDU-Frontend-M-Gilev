@@ -1,4 +1,4 @@
-.messenger-header {
+.profile-page-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -8,29 +8,29 @@
     height: 80px;
 }
 
-.burger {
+.profile-page-back-button {
     display: flex;
     align-items: center;
+    justify-content: center;
     background: none;
     border: none;
     cursor: pointer;
     transform: scale(2);
     margin-right: 10px;
-    justify-content: center;
 }
 
-.burger:hover {
+.profile-page-back-button:hover {
     filter: brightness(0.7);
 }
 
-.messenger {
+.profile-page-title {
     display: flex;
     align-items: center;
     justify-content: center;
     margin-left: 30px;
 }
 
-.search-icon {
+.page-profile-okIcon {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -41,17 +41,17 @@
     transform: scale(2);
 }
 
-.search-icon:hover {
+.page-profile-okIcon:hover {
     filter: brightness(0.7);
     opacity: 0.8;
 }
 
 @media (max-width: 768px) {
-    .messenger-header {
+    .profile-page-header {
         height: 60px;
     }
 
-    .burger {
+    .profile-page-back-button {
         background: none;
         border: none;
         cursor: pointer;
@@ -59,16 +59,16 @@
         margin-right: 10px;
     }
 
-    .messenger {
+    .profile-page-title {
         margin-right: 50px;
         margin-left: 20px;
     }
 
-    .search-icon {
-        transform: scale(1.5);
+    .profile-page-title h1 {
+        font-size: 20px;
     }
 
-    .messenger h1 {
-        font-size: 20px;
+    .page-profile-okIcon {
+        transform: scale(1.5);
     }
 }

@@ -20,19 +20,18 @@ body {
     overflow: hidden;
 }
 
+.chat-page {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
 .chat-container {
     display: flex;
-    flex-grow: 1;
     flex-direction: column;
-    height: calc(100vh - 150px);
     overflow-y: auto;
     overflow-x: hidden;
     padding: 10px;
     background-color: #FBEEC1;
 }
 
-@media (max-width: 768px) {
-    .chat-container {
-        height: calc(100vh - 110px);
-    }
-}
