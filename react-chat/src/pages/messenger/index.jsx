@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
 
 import startChatButtonLogo from '/startChatButton.svg';
-import profileLinkLogo from '/profileLink.svg';
 
 // Импорт компонентов
 import { HeaderChatList } from '../../components/header';
 import { SideBurgerMenu } from '../../components/burger-side-menu';
 import { FriendList } from '../../components/friends-list';
+import { Chats } from '../../components/chats';
 
 import './index.css';
 
@@ -130,30 +129,14 @@ const Messenger = () => {
       <HeaderChatList setBurgerMenuVisible={setBurgerMenuVisible}/>
 
       <div className='chat-container' ref={chatContainerRef}>
-        <div className='messages'>
-          {messages.map((msg, index) => (
-            <Link to={`/chat/${msg.id}`} className='message-link' key={index}>
-              <div className='user-beep'>
-                <img className='avatar' src={profileLinkLogo}/>
-                <div className='user-details'>
-                  <div className='top-container'>
-                    <strong className='user'>{msg.whom}</strong> <small className='time-text'>{msg.time}</small>
-                  </div>
-                  <small className='message-text'>{msg.lastMessage}</small>
-                </div>
-              </div>
-              <div className='badge'>{msg.badge}</div>
-            </Link>
-          ))}
-        </div>
+        <Chats />
 
         <button className='start-chat-button' onClick={() => setChatSelectionVisible(true)}>
             <img src={startChatButtonLogo}/>
         </button>
 
         {isChatSelectionVisible && (
-          <FriendList modalRef={modalRef} setChatSelectionVisible={setChatSelectionVisible}
-          friends={friends}/>
+          <FriendList modalRef={modalRef} setChatSelectionVisible={setChatSelectionVisible}/>
         )}
       </div>
     </div>

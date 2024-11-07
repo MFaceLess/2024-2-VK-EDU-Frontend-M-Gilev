@@ -1,20 +1,26 @@
 import React, { forwardRef, useEffect, useState } from 'react';
 
+import { useNavigate } from 'react-router-dom'
+
 import './index.css'
 
 export const ProfilePageForm = forwardRef((props, ref) => {
-    const [fullName, setFullName] = useState('');
+    const navigate = useNavigate();
+
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [avatar, setAvatar] = useState(null);
     const [username, setUsername] = useState('');
     const [bio, setBio] = useState('');
-  
+
+    const [avatarFile, setAvatarFile] = useState(null);
+
     const [usernameColor, setUserNameColor] = useState('#ccc');
 
     const handleAvatarChange = (e) => {
         const file = e.target.files[0];
         if (file) {
+            setAvatarFile(file);
             const reader = new FileReader();
             reader.onloadend = () => {
                 setAvatar(reader.result);
@@ -24,7 +30,7 @@ export const ProfilePageForm = forwardRef((props, ref) => {
     };
 
     useEffect(() => {
-        const url = 'https://vkedu-fullstack-div2.ru/api/user/current/';
+        const url = '/api/user/current/';
         fetch(url, {
             method: 'GET',
             headers: {
@@ -35,6 +41,9 @@ export const ProfilePageForm = forwardRef((props, ref) => {
         .then((response) => {
             if (!response.ok) {
                 return response.json().then((errorData) => {
+                    if (errorData.code === 'token_not_valid') {
+                        navigate('/auth');
+                    }
                     throw new Error(`${errorData}`);
                 });
             }
@@ -42,26 +51,65 @@ export const ProfilePageForm = forwardRef((props, ref) => {
         })
         .then((data) => {
             console.log(data);
+            setUsername(data.username);
+            setFirstName(data.first_name);
+            setLastName(data.last_name);
+            setBio(data.bio);
+            setAvatar(data.avatar);
+            localStorage.setItem('uuid', data.id);
         })
         .catch((error) => {
-            alert(`Ошибка ${error}`);
+            alert(`${error}`);
         })
     }, [])
 
-    const saveProfileParameters = () => {
-        const objToSave = {
-            username: username,
-            firstName: firstName,
-            lastName: lastName,
-            bio: bio,
-            avatar: avatar,
-        };
-        localStorage.setItem('profileParameters', JSON.stringify(objToSave));
-    }
-
     const handleSubmit = (e) => {
         e.preventDefault();
-        alert("Данные успешно обновлены!");
+        const formData = new FormData();
+        formData.append('username', username);
+        formData.append('first_name', firstName);
+        formData.append('last_name', lastName);
+        formData.append('bio', bio);
+        if (avatarFile) {
+            formData.append('avatar', avatarFile);
+        }
+
+        fetch(`api/user/${localStorage.getItem('uuid')}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('access')}`,
+            },
+            body: formData,
+        })
+        .then((response) => {
+            if (!response.ok) {
+                return response.json().then((errorData) => {
+                    for (var key in errorData) {
+                        errorData[key].forEach((error) => {
+                            // switch (key) {
+                            //     case 'password':
+                            //         setPasswordColor('red');
+                            //         setPasswordError(error);
+                            //         break;
+                            //     case 'username':
+                            //         setUserNameColor('red');
+                            //         setUsernameError(error);
+                            //         break;
+                            // }
+                            throw new Error(error);
+                        })
+                    }
+                });
+            }
+            return response.json();
+        })
+        .then((data) => {
+            console.log(data);
+            alert("Данные успешно обновлены!");
+        })
+        .catch((error) => {
+            alert(`${error}`);
+        })
     }
 
     return (

@@ -20,17 +20,20 @@
     opacity: 0.8;
 }
 
-.profile-link {
+.profile-link img {
     display: flex;
     align-items: center;
-    margin-right: 50px;
-    margin-left: 50px;
-    transform: scale(3);
+    width: 60px;
+    height: 60px;
+    margin-right: 20px;
+    margin-left: 20px;
+    border-radius: 50%;
+    object-fit: cover;
     transition: transform 0.5s ease;
 }
 
-.profile-link:hover {
-    transform: scale(2.1);
+.profile-link img:hover {
+    transform: scale(1.1);
 }
 
 .user-info {
@@ -88,8 +91,9 @@
         transform: scale(1.5);
     }
 
-    .profile-link {
-        transform: scale(2);
+    .profile-link img {
+        width: 50px;
+        height: 50px;
         margin-right: 15px;
         margin-left: 5px;
     }

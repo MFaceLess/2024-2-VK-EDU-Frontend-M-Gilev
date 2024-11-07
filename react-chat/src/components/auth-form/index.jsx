@@ -3,7 +3,7 @@ import React, { forwardRef, useEffect, useState } from 'react';
 import './index.css'
 
 export const AuthForm = forwardRef((props, ref) => {
-    const [isLogin, setIsLogin] = useState(false);
+    const [isLogin, setIsLogin] = useState(true);
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [username, setUsername] = useState('');
@@ -90,6 +90,7 @@ export const AuthForm = forwardRef((props, ref) => {
             return response.json();
         })
         .then((data) => {
+            localStorage.setItem('uuid', data.id);
             alert('Пользователь успешно зарегистрирован!');
         })
         .catch((error) => {
@@ -98,7 +99,7 @@ export const AuthForm = forwardRef((props, ref) => {
     }
 
     const loginUser = () => {
-        fetch('https://vkedu-fullstack-div2.ru/api/auth', {
+        fetch('/api/auth/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -108,7 +109,7 @@ export const AuthForm = forwardRef((props, ref) => {
         .then((response) => {
             if (!response.ok) {
                 return response.json().then((errorData) => {
-                    throw new Error('Ошибка: Неверный логин или пароль');
+                    throw new Error('Неверный логин или пароль');
                 });
             }
             return response.json();
@@ -119,7 +120,7 @@ export const AuthForm = forwardRef((props, ref) => {
             alert('You are logged in!');
         })
         .catch((error) => {
-            alert(`Ошибка ${error}`);
+            alert(`${error}`);
         })
     }
 
