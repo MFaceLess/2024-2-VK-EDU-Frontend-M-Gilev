@@ -20,8 +20,6 @@ const Chat = () => {
   const messagesRef = useRef([]);
 
   useEffect(() => {
-    const yourId = localStorage.getItem('uuid');
-
     fetch('https://vkedu-fullstack-div2.ru/api/chats/', {
       method: 'GET',
       headers: {
@@ -37,16 +35,17 @@ const Chat = () => {
 
         if (existingChat) {
           setChatId(existingChat.id);
-        } else {
-          createChat();
         }
+        // } else {
+        //   createChat();
+        // }
       })
       .catch(error => {
         alert(`${error}`);
       });
   }, [friend]);
 
-  const createChat = () => {
+  const startDialog = () => {
     fetch('https://vkedu-fullstack-div2.ru/api/chats/', {
       method: 'POST',
       headers: {
@@ -61,7 +60,6 @@ const Chat = () => {
     })
     .then(response => response.json())
     .then(data => {
-      if (!data.id) return;
       setChatId(data.id);
       console.log(chatId);
       alert('Чат успешно создан!');
@@ -173,7 +171,12 @@ const Chat = () => {
           />
         ))}
       </div>
-      {chatId && <ChatSendMessageForm setMessages={setMessages} id={chatId} />}
+      <div className="chat-footer">
+        {!chatId && (
+          <button className="register-button" onClick={startDialog}>Начать диалог</button>
+        )}
+        {chatId && <ChatSendMessageForm setMessages={setMessages} id={chatId} />}
+      </div>
     </div>
   );
 };
