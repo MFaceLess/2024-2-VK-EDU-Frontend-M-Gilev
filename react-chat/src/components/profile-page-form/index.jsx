@@ -74,7 +74,7 @@ export const ProfilePageForm = forwardRef((props, ref) => {
             formData.append('avatar', avatarFile);
         }
 
-        fetch(`api/user/${localStorage.getItem('uuid')}`, {
+        fetch(`https://vkedu-fullstack-div2.ru/api/user/${localStorage.getItem('uuid')}`, {
             method: 'PATCH',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('access')}`,

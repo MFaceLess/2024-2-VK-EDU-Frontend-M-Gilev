@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import sendButtonLogo from '/sendButton.svg'
 import attachButtonLogo from '/attachButton.svg'
@@ -6,6 +7,7 @@ import attachButtonLogo from '/attachButton.svg'
 import './index.css'
 
 export const ChatSendMessageForm = ({ setMessages, id }) => {
+    const navigate = useNavigate();
     const [input, setInput] = useState('');
     const messagesRef = useRef([]);
 

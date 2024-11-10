@@ -38,7 +38,7 @@ const Chat = () => {
         if (existingChat) {
           setChatId(existingChat.id);
         } else {
-          createChat(yourId);
+          createChat();
         }
       })
       .catch(error => {
@@ -46,7 +46,7 @@ const Chat = () => {
       });
   }, [friend]);
 
-  const createChat = (yourId) => {
+  const createChat = () => {
     fetch('https://vkedu-fullstack-div2.ru/api/chats/', {
       method: 'POST',
       headers: {
@@ -54,7 +54,7 @@ const Chat = () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        'members': [yourId, friend.id],
+        'members': [friend.id],
         'is_private': true,
         'title': 'bug',
       }),
@@ -62,6 +62,7 @@ const Chat = () => {
     .then(response => response.json())
     .then(data => {
       setChatId(data.id);
+      console.log(chatId);
       alert('Чат успешно создан!');
     })
     .catch(error => {
@@ -171,7 +172,7 @@ const Chat = () => {
           />
         ))}
       </div>
-      <ChatSendMessageForm setMessages={setMessages} id={id} />
+      {chatId && <ChatSendMessageForm setMessages={setMessages} id={chatId} />}
     </div>
   );
 };

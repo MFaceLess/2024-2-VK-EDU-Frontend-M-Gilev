@@ -1,8 +1,12 @@
 import React, { forwardRef, useEffect, useState } from 'react';
 
+import { useNavigate } from 'react-router-dom';
+
 import './index.css'
 
 export const AuthForm = forwardRef((props, ref) => {
+    const navigate = useNavigate();
+
     const [isLogin, setIsLogin] = useState(true);
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -118,6 +122,7 @@ export const AuthForm = forwardRef((props, ref) => {
             localStorage.setItem('access', data.access);
             localStorage.setItem('refresh', data.refresh);
             alert('You are logged in!');
+            navigate('/');
         })
         .catch((error) => {
             alert(`${error}`);
