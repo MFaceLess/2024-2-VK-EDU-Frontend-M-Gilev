@@ -61,6 +61,7 @@ const Chat = () => {
     })
     .then(response => response.json())
     .then(data => {
+      if (!data.id) return;
       setChatId(data.id);
       console.log(chatId);
       alert('Чат успешно создан!');
