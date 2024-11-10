@@ -62,7 +62,6 @@ export const ChatSendMessageForm = ({ setMessages, id }) => {
         if (!response.ok) throw new Error('Ошибка при посылке сообщения');
         const data = await response.json();
         // await updateMes();
-        console.log(data);
         setInput('');
       } catch (error) {
         alert(error);
