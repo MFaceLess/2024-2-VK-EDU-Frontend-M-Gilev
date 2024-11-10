@@ -63,6 +63,7 @@ export const ChatSendMessageForm = ({ setMessages, id }) => {
         const data = await response.json();
         // await updateMes();
         console.log(data);
+        setInput('');
       } catch (error) {
         alert(error);
         navigate('/auth');

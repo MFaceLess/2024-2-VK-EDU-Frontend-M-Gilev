@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import closeButtonLogo from '/closeButton.svg';
@@ -9,6 +9,9 @@ import './index.css'
 export const FriendList = ({modalRef, setChatSelectionVisible}) => {
   const navigate = useNavigate();
   const [friends, setFriends] = useState([]);
+
+  const [page, setPage] = useState(1);
+  const observer = useRef();
 
   useEffect(() => {
     fetch('https://vkedu-fullstack-div2.ru/api/users/?page_size=1000000', {
