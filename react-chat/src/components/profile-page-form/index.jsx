@@ -30,7 +30,7 @@ export const ProfilePageForm = forwardRef((props, ref) => {
     };
 
     useEffect(() => {
-        const url = '/api/user/current/';
+        const url = 'https://vkedu-fullstack-div2.ru/api/user/current/';
         fetch(url, {
             method: 'GET',
             headers: {

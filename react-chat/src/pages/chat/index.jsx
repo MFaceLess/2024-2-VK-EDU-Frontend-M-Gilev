@@ -22,7 +22,7 @@ const Chat = () => {
   useEffect(() => {
     const yourId = localStorage.getItem('uuid');
 
-    fetch('/api/chats/', {
+    fetch('https://vkedu-fullstack-div2.ru/api/chats/', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('access')}`,
@@ -47,7 +47,7 @@ const Chat = () => {
   }, [friend]);
 
   const createChat = (yourId) => {
-    fetch('/api/chats/', {
+    fetch('https://vkedu-fullstack-div2.ru/api/chats/', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('access')}`,
@@ -80,7 +80,7 @@ const Chat = () => {
     const chat = chatId;
     const page_size = 150;
     const params = new URLSearchParams({ chat, page_size });
-    fetch(`/api/messages/?${params.toString()}`, {
+    fetch(`https://vkedu-fullstack-div2.ru/api/messages/?${params.toString()}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('access')}`,

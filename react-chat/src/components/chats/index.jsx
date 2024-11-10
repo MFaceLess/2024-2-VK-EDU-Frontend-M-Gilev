@@ -15,7 +15,7 @@ export const Chats = () => {
   const fetchChatsFromApi = async ({ page_size = 10, page = 1 }) => {
     const params = new URLSearchParams({ page_size, page });
     try {
-      const response = await fetch(`/api/chats/?${params.toString()}`, {
+      const response = await fetch(`https://vkedu-fullstack-div2.ru/api/chats/?${params.toString()}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${accessToken}`,

@@ -19,7 +19,7 @@ export const ChatSendMessageForm = ({ setMessages, id }) => {
       const page_size = 150;
       const params = new URLSearchParams({ chat, page_size });
       try {
-        const response = await fetch(`/api/messages/?${params.toString()}`, {
+        const response = await fetch(`https://vkedu-fullstack-div2.ru/api/messages/?${params.toString()}`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('access')}`,
@@ -46,7 +46,7 @@ export const ChatSendMessageForm = ({ setMessages, id }) => {
     const sendMessageHandler = async () => {
       if (!input.trim()) return;
       try {
-        const response = await fetch('/api/messages/', {
+        const response = await fetch('https://vkedu-fullstack-div2.ru/api/messages/', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('access')}`,
