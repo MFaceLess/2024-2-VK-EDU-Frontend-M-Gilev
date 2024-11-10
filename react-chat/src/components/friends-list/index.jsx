@@ -11,7 +11,7 @@ export const FriendList = ({modalRef, setChatSelectionVisible}) => {
   const [friends, setFriends] = useState([]);
 
   useEffect(() => {
-    fetch('https://vkedu-fullstack-div2.ru/api/users/?page_size=100000', {
+    fetch('https://vkedu-fullstack-div2.ru/api/users/?page_size=1000000', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('access')}`,

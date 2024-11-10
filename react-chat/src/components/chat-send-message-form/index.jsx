@@ -61,7 +61,7 @@ export const ChatSendMessageForm = ({ setMessages, id }) => {
         });
         if (!response.ok) throw new Error('Ошибка при посылке сообщения');
         const data = await response.json();
-        await updateMes();
+        // await updateMes();
         console.log(data);
       } catch (error) {
         alert(error);
@@ -85,7 +85,7 @@ export const ChatSendMessageForm = ({ setMessages, id }) => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             />
-            <button className='send-button' onClick={sendMessageHandler}>
+            <button className='send-button'>
                 <img src={sendButtonLogo}/>
             </button>
             <button className='attach-button'>
