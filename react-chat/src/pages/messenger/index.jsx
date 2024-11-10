@@ -47,6 +47,34 @@ const Messenger = () => {
     }
   }, [chatContainerRef])
 
+  useEffect(() => {
+    const url = 'https://vkedu-fullstack-div2.ru/api/user/current/';
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access')}`,
+            'Content-Type': 'application/json',
+        }
+    })
+    .then((response) => {
+        if (!response.ok) {
+            return response.json().then((errorData) => {
+                if (errorData.code === 'token_not_valid') {
+                    navigate('/auth');
+                }
+                throw new Error(`${errorData}`);
+            });
+        }
+        return response.json();
+    })
+    .then((data) => {
+        localStorage.setItem('uuid', data.id);
+    })
+    .catch((error) => {
+        alert(`${error}`);
+    })
+}, [])
+
   return (
 
     <>
