@@ -1,58 +1,71 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 import sendButtonLogo from '/sendButton.svg'
 import attachButtonLogo from '/attachButton.svg'
 
 import './index.css'
 
-export const ChatSendMessageForm = ({user, setMessages, id}) => {
+export const ChatSendMessageForm = ({ setMessages, id }) => {
     const [input, setInput] = useState('');
+    const messagesRef = useRef([]);
 
-    const saveMessage = (message) => {
-        const storedMessages = JSON.parse(localStorage.getItem('messages')) || [];
-        storedMessages.push(message);
-        localStorage.setItem('messages', JSON.stringify(storedMessages));
-        setMessages(prevMessages => [...prevMessages, message]);
+    const addNewMessages = (newMessages) => {
+      messagesRef.current = [...messagesRef.current, ...newMessages];
+      setMessages((prev) => [...prev, ...newMessages]);
+    }
+
+    const updateMes = async () => {
+      const chat = id;
+      const page_size = 150;
+      const params = new URLSearchParams({ chat, page_size });
+      try {
+        const response = await fetch(`/api/messages/?${params.toString()}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access')}`,
+            'Content-Type': 'application/json',
+          },
+        })
+        if (!response.ok) throw new Error('Ошибка при получении сообщений');
+        const data = await response.json();
+        const mesElem = data.results.reverse().map((message) => ({
+          'sender': message.sender.first_name + ' ' + message.sender.last_name,
+          'time': new Date(message.created_at).toLocaleString(),
+          'text': message.text,
+          'id': message.id,
+          'senderId': message.sender.id,
+        }));
+        addNewMessages(mesElem);
+        // setMessages((prevMes) => [...prevMes, ... mesElem]);
+      } catch (error) {
+        alert(error);
+        navigate('/auth');
+      }
+    }
+    
+    const sendMessageHandler = async () => {
+      if (!input.trim()) return;
+      try {
+        const response = await fetch('/api/messages/', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access')}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            'text': input,
+            'chat': id,
+          }),
+        });
+        if (!response.ok) throw new Error('Ошибка при посылке сообщения');
+        const data = await response.json();
+        await updateMes();
+        console.log(data);
+      } catch (error) {
+        alert(error);
+        navigate('/auth');
+      }
     };
-
-    const sendMessageHandler = () => {
-        if (!input.trim()) return;
-    
-        const message = {
-          sender: 'You',
-          text: input,
-          time: new Date().toLocaleTimeString(),
-          lastMessage: input,
-          whom: user,
-          id: id,
-        };
-    
-        saveMessage(message);
-        setInput('');
-    
-        const chatInfo = {
-          lastMessage: input,
-          time: new Date().toLocaleTimeString(),
-          whom: user,
-          isReaded: false,
-          id: id,
-        };
-    
-        localStorage.setItem(user, JSON.stringify(chatInfo));
-    
-        setTimeout(() => {
-          const reply = {
-            sender: user,
-            text: 'I do not understand you(',
-            time: new Date().toLocaleTimeString(),
-            lastMessage: 'I do not understand you(',
-            whom: user,
-            id: id,
-          };
-          saveMessage(reply);
-          localStorage.setItem(user, JSON.stringify(reply));
-        }, 1000);
-      };
 
     const handleSubmit = (e) => {
         e.preventDefault();

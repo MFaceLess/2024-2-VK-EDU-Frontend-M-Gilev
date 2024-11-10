@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'
-import { Centrifuge } from 'centrifuge'
+import { Centrifuge } from 'centrifuge';
 
 import profileLinkLogo from '/profileLink.svg';
 
@@ -8,11 +8,11 @@ import './index.css'
 
 export const Chats = () => {
   const navigate = useNavigate();
-  const [messages, setMessages] = useState([]);
+  const [messages, setChats] = useState([]);
 
   const accessToken = localStorage.getItem('access');
 
-  const fetchChats = async ({ page_size = 10, page = 1 }) => {
+  const fetchChatsFromApi = async ({ page_size = 10, page = 1 }) => {
     const params = new URLSearchParams({ page_size, page });
     try {
       const response = await fetch(`/api/chats/?${params.toString()}`, {
@@ -24,21 +24,70 @@ export const Chats = () => {
       });
       if (!response.ok) throw new Error('Ошибка при получении списка чатов');
       const data = await response.json();
-      console.log(data);
-      setMessages(data.results);
+      setChats(data.results);
     } catch (error) {
-      console.error('Ошибка:', error);
+      navigate('/auth');
     }
   };
 
   useEffect(() => {
-    fetchChats({ page_size: 100, page: 1 });
+    fetchChatsFromApi({ page_size: 100, page: 1 });
+    
+    const centrifuge = new Centrifuge('wss://vkedu-fullstack-div2.ru/connection/websocket/', {
+      getToken: (ctx) =>
+        fetch('https://vkedu-fullstack-div2.ru/api/centrifugo/connect/', {
+          body: JSON.stringify(ctx),
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access')}`,
+            'Content-Type': 'application/json',
+          },
+        })
+        .then((res) => res.json())
+        .then((data) => data.token),
+    });
+
+    const subscription = centrifuge.newSubscription(localStorage.getItem('uuid'), {
+      getToken: (ctx) =>
+        fetch('https://vkedu-fullstack-div2.ru/api/centrifugo/subscribe/', {
+          body: JSON.stringify(ctx),
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access')}`,
+            'Content-Type': 'application/json',
+          },
+        })
+        .then((res) => res.json())
+        .then((data) => data.token),
+    });
+
+    subscription.on('publication', (ctx) => {
+      console.log(ctx);
+      const { event, message } = ctx.data;
+      if (event === 'create') {
+        if (message) {
+          fetchChatsFromApi({ page_size: 100, page: 1 });
+        }
+      }
+    });
+
+    subscription.subscribe();
+    centrifuge.connect();
+
+    return () => {
+      centrifuge.disconnect();
+    };
   }, []);
 
   return (
     <div className='messages'>
       {messages.map((msg, index) => (
-        <Link to={`/chat/${msg.id}`} state={{ friend: msg.members.find(member => member.id !== localStorage.getItem('uuid'))}} className='message-link' key={index}>
+        <Link 
+          to={`/chat/${msg.id}`} 
+          state={{ friend: msg.members ? msg.members.find(member => member.id !== localStorage.getItem('uuid')) : null }}
+          className='message-link' 
+          key={index}
+        >
           <div className='user-beep'>
             <img className='user-avatar' src={msg.avatar || profileLinkLogo}/>
             <div className='user-details'>

@@ -12,14 +12,14 @@ import './App.css';
 function App() {
   return (
     <HashRouter>
-      <div className='app'>
-        <Routes>
-          <Route path='/' element={<Messenger />} />
-          <Route path='/chat/:id' element={<Chat />} />
-          <Route path='/profile-page' element={<ProfilePage />} />
-          <Route path='/auth' element={<AuthPage />} />
-        </Routes>
-      </div>
+        <div className='app'>
+          <Routes>
+            <Route path='/' element={<Messenger />} />
+            <Route path='/chat/:id' element={<Chat />} />
+            <Route path='/profile-page' element={<ProfilePage />} />
+            <Route path='/auth' element={<AuthPage />} />
+          </Routes>
+        </div>
     </HashRouter>
   );
 }
