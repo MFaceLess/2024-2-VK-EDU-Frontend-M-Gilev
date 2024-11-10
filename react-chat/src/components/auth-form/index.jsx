@@ -57,7 +57,7 @@ export const AuthForm = forwardRef((props, ref) => {
         // const json = await res.json();
         // alert(json);
 
-        fetch('/api/register/', {
+        fetch('https://vkedu-fullstack-div2.ru/api/register/', {
             method: 'POST',
             body: formData,
         })
@@ -99,7 +99,7 @@ export const AuthForm = forwardRef((props, ref) => {
     }
 
     const loginUser = () => {
-        fetch('/api/auth/', {
+        fetch('https://vkedu-fullstack-div2.ru/api/auth/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
