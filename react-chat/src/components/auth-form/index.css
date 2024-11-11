@@ -145,7 +145,7 @@ input:focus, textarea:focus {
     }
 
     .auth-form-group {
-        padding: 0;
+        padding: 5px;
     }
 }
 

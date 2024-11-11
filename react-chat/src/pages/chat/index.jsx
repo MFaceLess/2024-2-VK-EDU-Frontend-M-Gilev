@@ -102,7 +102,9 @@ const Chat = () => {
         setMessages((prevMessages) => [...prevMessages, ...newMessages]);
       }
     })
-    .catch((error) => alert(error))
+    .catch((error) => {
+      // alert(error);
+    })
   }, [chatId])
 
   const { id } = useParams();

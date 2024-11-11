@@ -24,6 +24,14 @@ export const AuthForm = forwardRef((props, ref) => {
     const [passwordError, setPasswordError] = useState('');
     //---------------
 
+    useEffect(() => {
+        setUserNameColor('#ccc');
+        setUsernameError('');
+
+        setPasswordColor('#ccc');
+        setPasswordError('');
+    }, [isLogin])
+
     // useEffect(() => {
     //     if (validateUsername(username) === true) {
     //         setUserNameColor('#ccc');
@@ -98,7 +106,7 @@ export const AuthForm = forwardRef((props, ref) => {
             alert('Пользователь успешно зарегистрирован!');
         })
         .catch((error) => {
-            alert(`Ошибка: ${error.message}`);
+            // alert(`Ошибка: ${error.message}`);
         })
     }
 
@@ -113,7 +121,10 @@ export const AuthForm = forwardRef((props, ref) => {
         .then((response) => {
             if (!response.ok) {
                 return response.json().then((errorData) => {
-                    throw new Error('Неверный логин или пароль');
+                    setPasswordError(errorData.detail);
+                    setPasswordColor('red');
+                    setUserNameColor('red');
+                    throw new Error(errorData);
                 });
             }
             return response.json();
@@ -125,7 +136,7 @@ export const AuthForm = forwardRef((props, ref) => {
             navigate('/');
         })
         .catch((error) => {
-            alert(`${error}`);
+            // alert(`${error.detail}`);
         })
     }
 
@@ -183,13 +194,15 @@ export const AuthForm = forwardRef((props, ref) => {
                 onChange={(e) => { 
                     setUserNameColor('#ccc');
                     setUsernameError('');
+                    setPasswordColor('#ccc');
+                    setPasswordError('');
                     setUsername(e.target.value);
                 }}
                 required
                 autoComplete='off'
                 style={{borderColor:usernameColor}}
                 />
-                <small className='hint'>{usernameError}</small>
+                <small className='hint' style={{color: 'red'}}>{usernameError}</small>
             </div>
 
             <div className='auth-form-group'>
@@ -199,6 +212,8 @@ export const AuthForm = forwardRef((props, ref) => {
                 id='password'
                 value={password}
                 onChange={(e) => {
+                    setUserNameColor('#ccc');
+                    setUsernameError('');
                     setPasswordColor('#ccc');
                     setPasswordError('');
                     setPassword(e.target.value);
@@ -207,7 +222,7 @@ export const AuthForm = forwardRef((props, ref) => {
                 autoComplete='off'
                 style={{borderColor: passwordColor}}
                 />
-                <small className='hint'>{passwordError}</small>
+                <small className='hint' style={{color: 'red'}}>{passwordError}</small>
             </div>
 
             {!isLogin && (

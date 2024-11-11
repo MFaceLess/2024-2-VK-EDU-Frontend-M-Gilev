@@ -38,11 +38,14 @@ export const FriendList = ({modalRef, setChatSelectionVisible}) => {
       return response.json();
     })
     .then((data) => {
-      setFriends(data.results);
+      const myId = localStorage.getItem('uuid');
+      const filteredFriends = data.results.filter(friend => friend.id !== myId);
+      setFriends(filteredFriends);
       setPagesNum(Math.ceil(Number(data.count) / page_size));
+      setPage((prevPage) => prevPage + 1);
     })
     .catch((error) => {
-      alert(`${error}`);
+      // alert(`${error}`);
     })
   }, []);
 
@@ -58,7 +61,9 @@ export const FriendList = ({modalRef, setChatSelectionVisible}) => {
       });
       if (!response.ok) throw new Error('Ошибка при получении списка чатов');
       const data = await response.json();
-      setFriends((prevFriends) => [...prevFriends, ...data.results]);
+      const myId = localStorage.getItem('uuid');
+      const filteredFriends = data.results.filter(friend => friend.id !== myId);
+      setFriends((prevFriends) => [...prevFriends, ...filteredFriends]);
       setPage((prevPage) => prevPage + 1);
     } catch (error) {
       navigate('/auth');

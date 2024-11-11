@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import startChatButtonLogo from '/startChatButton.svg';
 
@@ -12,6 +13,8 @@ import { Chats } from '../../components/chats';
 import './index.css';
 
 const Messenger = () => {
+  const navigate = useNavigate();
+
   const [isBurgerMenuVisible, setBurgerMenuVisible] = useState(false);
   const [isChatSelectionVisible, setChatSelectionVisible] = useState(false);
   const chatContainerRef = useRef(null);
@@ -60,7 +63,8 @@ const Messenger = () => {
         if (!response.ok) {
             return response.json().then((errorData) => {
                 if (errorData.code === 'token_not_valid') {
-                    navigate('/auth');
+                  alert(`${errorData.detail}`);
+                  navigate('/auth');
                 }
                 throw new Error(`${errorData}`);
             });
@@ -71,7 +75,7 @@ const Messenger = () => {
         localStorage.setItem('uuid', data.id);
     })
     .catch((error) => {
-        alert(`${error}`);
+      // alert(`${error}`);
     })
 }, [])
 
