@@ -96,7 +96,9 @@ export const Chats = () => {
               <div className='top-container'>
                 <strong className='user'>{msg.title}</strong> <small className='time-text'>{new Date(msg.updated_at).toLocaleString()}</small>
               </div>
-              <small className='message-text'>{msg.last_message?.text || 'Нет сообщений'}</small>
+              <small className='message-text_corrected'>
+                {msg.last_message?.text ||  (msg.last_message?.voice? 'Голосовое сообщение' : msg.last_message?.files? 'Изображения: images' : 'Нет сообщений')}
+              </small>
             </div>
           </div>
           {/* <div className='badge'>{msg.badge}</div> */}

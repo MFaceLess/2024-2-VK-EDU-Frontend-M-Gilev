@@ -46,3 +46,62 @@ input {
     outline: none;
     width: calc(100% - 2px);
 }
+
+.attach-menu {
+    position: absolute;
+    bottom: 60px;
+    right: 40px;
+    background-color: #fff;
+    border: 1px solid #DAAD86;
+    border-radius: 8px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    padding: 8px 0;
+    z-index: 10;
+    width: 120px;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.attach-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.attach-menu li {
+    display: flex;
+    justify-content: center;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.attach-menu label {
+    font-weight: normal;
+}
+
+.attach-menu li:hover {
+    background-color: #659DBD;
+    color: #fff;
+}
+
+.recording {
+    background-color: red !important;
+    font-weight: bold;
+}

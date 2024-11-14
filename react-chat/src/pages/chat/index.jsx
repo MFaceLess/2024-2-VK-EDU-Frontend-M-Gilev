@@ -4,6 +4,7 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { ChatSendMessageForm } from '../../components/chat-send-message-form';
 import { Message } from '../../components/chat-message';
 import { HeaderChat } from '../../components/header';
+import { SendPhotosForm } from '../../components/send_photos';
 
 import { Centrifuge } from 'centrifuge';
 
@@ -18,6 +19,34 @@ const Chat = () => {
   const [messages, setMessages] = useState([]);
   const chatContainerRef = useRef(null);
   const messagesRef = useRef([]);
+  const [images, setImages] = useState(null);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const modalRef = useRef(null);
+
+  //Обработка закрытия модалки
+  useEffect(() => {
+    const clickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setIsModalOpen(false);
+      }
+    }
+
+    const escDown = (event) => {
+      if (event.key === 'Escape') {
+        setIsModalOpen(false);
+        document.activeElement.blur();
+      }
+    };
+
+    document.addEventListener('keydown', escDown);
+    document.addEventListener('mousedown', clickOutside);
+
+    return () => {
+      document.removeEventListener('keydown', escDown);
+      document.removeEventListener('mousedown', clickOutside);
+    };
+  }, [setIsModalOpen]);
 
   useEffect(() => {
     fetch('https://vkedu-fullstack-div2.ru/api/chats/', {
@@ -95,6 +124,8 @@ const Chat = () => {
         'text': message.text,
         'id': message.id,
         'senderId': message.sender.id,
+        'files': message.files ? message.files.map(file => {return file.item}) : [],
+        'voice': message.voice,
       }));
       const newMessages = mesElem.filter(msg => !messagesRef.current.some(m => m.id === msg.id));
       if (newMessages.length > 0) {
@@ -140,15 +171,20 @@ const Chat = () => {
 
     subscription.on('publication', (ctx) => {
       const { event, message } = ctx.data;
+      console.log(message.files.map(file => {return file.item}));
       if (event === 'create') {
+        console.log(message.files.map(file => {return file.item.url}));
         const newMessage = {
           sender: `${message.sender.first_name} ${message.sender.last_name}`,
           time: new Date(message.created_at).toLocaleString(),
           text: message.text,
           id: message.id,
           senderId: message.sender.id,
+          files: message.files ? message.files.map(file => `https://vkedu-fullstack-div2.ru${file.item}`) : [],
+          voice: message.voice ? `https://vkedu-fullstack-div2.ru${message.voice}` : null,
         };
         setMessages((prevMessages) => [...prevMessages, newMessage]);
+        console.log('beep');
         messagesRef.current = [...messagesRef.current, newMessage];
       }
     });
@@ -159,16 +195,36 @@ const Chat = () => {
     return () => centrifuge.disconnect();
   }, []);
 
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const files = Array.from(e.dataTransfer.files).slice(0, 5);
+    setImages(files);
+    setIsModalOpen(true);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
   return (
     <div className='chat-page'>
       <HeaderChat user={friend} />
-      <div className='chat-container' ref={chatContainerRef}>
+      {isModalOpen && (
+        <div className="modal-background">
+          <div className="modal-content" ref={modalRef}>
+            <SendPhotosForm initialImages={images} chatId={chatId} setIsModalOpen={setIsModalOpen}/>
+          </div>
+        </div>
+      )}
+      <div className='chat-container' ref={chatContainerRef} onDrop={handleDrop} onDragOver={handleDragOver}>
         {messages.map((message, index) => (
           <Message
             sender={message.sender}
             time={message.time}
             text={message.text}
             senderId={message.senderId}
+            files={message.files}
+            voice={message.voice}
             key={index}
           />
         ))}
@@ -177,7 +233,7 @@ const Chat = () => {
         {!chatId && (
           <button className="register-button" onClick={startDialog}>Начать диалог</button>
         )}
-        {chatId && <ChatSendMessageForm setMessages={setMessages} id={chatId} />}
+        {chatId && <ChatSendMessageForm setMessages={setMessages} id={chatId} setImages={setImages} setIsModalOpen={setIsModalOpen}/>}
       </div>
     </div>
   );
