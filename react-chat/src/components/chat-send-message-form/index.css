@@ -30,6 +30,9 @@
     border: none;
     cursor: pointer;
     padding-left: 10px;
+}
+
+.attach-button img, .send-button img {
     transform: scale(2);
 }
 

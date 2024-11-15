@@ -1,70 +1,144 @@
 import React, { forwardRef, useEffect, useState } from 'react';
 
+import { useNavigate } from 'react-router-dom'
+
 import './index.css'
 
 export const ProfilePageForm = forwardRef((props, ref) => {
-    const [fullName, setFullName] = useState('');
+    const navigate = useNavigate();
+
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [avatar, setAvatar] = useState(null);
     const [username, setUsername] = useState('');
     const [bio, setBio] = useState('');
-  
-    const [usernameColor, setUserNameColor] = useState('#ccc'); 
+
+    const [avatarFile, setAvatarFile] = useState(null);
+
+    const [usernameColor, setUserNameColor] = useState('#ccc');
+
+    const handleAvatarChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setAvatarFile(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setAvatar(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
 
     useEffect(() => {
-        const profileParameters = localStorage.getItem('profileParameters');
-        if (profileParameters) {
-            const {fullName, username, bio} = JSON.parse(profileParameters);
-            setFullName(fullName);
-            setUsername(username);
-            setBio(bio);
-        }
+        const url = 'https://vkedu-fullstack-div2.ru/api/user/current/';
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('access')}`,
+                'Content-Type': 'application/json',
+            }
+        })
+        .then((response) => {
+            if (!response.ok) {
+                return response.json().then((errorData) => {
+                    if (errorData.code === 'token_not_valid') {
+                        navigate('/auth');
+                    }
+                    throw new Error(`${errorData}`);
+                });
+            }
+            return response.json();
+        })
+        .then((data) => {
+            console.log(data);
+            setUsername(data.username);
+            setFirstName(data.first_name);
+            setLastName(data.last_name);
+            setBio(data.bio);
+            setAvatar(data.avatar);
+            localStorage.setItem('uuid', data.id);
+        })
+        .catch((error) => {
+            alert(`${error}`);
+        })
     }, [])
-
-    useEffect(() => {
-        if (validateUsername(username) === true) {
-            setUserNameColor('#ccc');
-        } else {
-            setUserNameColor('red');
-        }
-    }, [username])
-
-    const validateUsername = (username) => {
-        return username.length >= 5;
-    }
-
-    const saveProfileParameters = () => {
-        const objToSave = {
-            fullName: fullName,
-            username: username,
-            bio: bio,
-        };
-        localStorage.setItem('profileParameters', JSON.stringify(objToSave));
-    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (validateUsername(username) === true) {
-            saveProfileParameters();
-            alert("Данные успешно обновлены!");
-        } else {
-            alert("Введите корректный пароль!");
+        const formData = new FormData();
+        formData.append('username', username);
+        formData.append('first_name', firstName);
+        formData.append('last_name', lastName);
+        formData.append('bio', bio);
+        if (avatarFile) {
+            formData.append('avatar', avatarFile);
         }
+
+        fetch(`https://vkedu-fullstack-div2.ru/api/user/${localStorage.getItem('uuid')}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('access')}`,
+            },
+            body: formData,
+        })
+        .then((response) => {
+            if (!response.ok) {
+                return response.json().then((errorData) => {
+                    for (var key in errorData) {
+                        errorData[key].forEach((error) => {
+                            // switch (key) {
+                            //     case 'password':
+                            //         setPasswordColor('red');
+                            //         setPasswordError(error);
+                            //         break;
+                            //     case 'username':
+                            //         setUserNameColor('red');
+                            //         setUsernameError(error);
+                            //         break;
+                            // }
+                            throw new Error(error);
+                        })
+                    }
+                });
+            }
+            return response.json();
+        })
+        .then((data) => {
+            console.log(data);
+            alert("Данные успешно обновлены!");
+        })
+        .catch((error) => {
+            alert(`${error}`);
+        })
     }
 
     return (
         <form ref={ref} className='profile-form' onSubmit={handleSubmit}>
-            <div className='form-group'>
-                <label htmlFor='fullName'>Full Name</label>
-                <input
-                type='text'
-                id='fullName'
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                required
-                autoComplete='off'
-                />
+            
+            <div className='profile-form-group'>
+                <div className='avatar-container'>
+                    <input
+                        type='file'
+                        id='avatar'
+                        accept='image/*'
+                        onChange={handleAvatarChange}
+                        style={{ display: 'none' }}
+                    />
+                    <button
+                        type='button'
+                        className={`avatar-button ${avatar ? 'has-image' : ''}`}
+                        onClick={() => document.getElementById('avatar').click()}
+                    >
+                        {avatar ? (
+                            <img src={avatar} alt='Avatar preview' className='avatar-preview' />
+                        ) : (
+                            <span className='avatar-placeholder'>+</span>
+                        )}
+                    </button>
+                </div>
             </div>
 
-            <div className='form-group'>
+            <div className='profile-form-group'>
                 <label htmlFor='username'>Username</label>
                 <input
                 type='text'
@@ -78,7 +152,31 @@ export const ProfilePageForm = forwardRef((props, ref) => {
                 <small className='hint'>Minimum length is 5 characters</small>
             </div>
 
-            <div className='form-group'>
+            <div className='profile-form-group'>
+                <label htmlFor='firstName'>First Name</label>
+                <input
+                type='text'
+                id='firstName'
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+                autoComplete='off'
+                />
+            </div>
+
+            <div className='profile-form-group'>
+                <label htmlFor='lastName'>Last Name</label>
+                <input
+                type='text'
+                id='lastName'
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+                autoComplete='off'
+                />
+            </div>
+
+            <div className='profile-form-group'>
                 <label htmlFor='bio'>Bio</label>
                 <textarea
                 id='bio'

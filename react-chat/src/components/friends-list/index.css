@@ -78,6 +78,7 @@
 .messenger-user-chat {
     width: 100%;
     padding: 20px;
+    word-break: break-word;
 }
 
 .user-icon {

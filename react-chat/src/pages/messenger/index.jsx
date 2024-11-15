@@ -1,28 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import startChatButtonLogo from '/startChatButton.svg';
-import profileLinkLogo from '/profileLink.svg';
 
 // Импорт компонентов
 import { HeaderChatList } from '../../components/header';
 import { SideBurgerMenu } from '../../components/burger-side-menu';
 import { FriendList } from '../../components/friends-list';
+import { Chats } from '../../components/chats';
+
 
 import './index.css';
 
 const Messenger = () => {
-  const [isBurgerMenuVisible, setBurgerMenuVisible] = useState(false);
+  const navigate = useNavigate();
 
+  const [isBurgerMenuVisible, setBurgerMenuVisible] = useState(false);
   const [isChatSelectionVisible, setChatSelectionVisible] = useState(false);
-  const [messages, setMessages] = useState([]);
-  const [friends] = useState([
-    {id: 1, name: 'User1'},
-    {id: 2, name: 'User2'},
-    {id: 3, name: 'User3'},
-    {id: 4, name: 'User4'},
-    {id: 5, name: 'User5'},
-  ]);
   const chatContainerRef = useRef(null);
   const modalRef = useRef(null);
 
@@ -51,113 +45,61 @@ const Messenger = () => {
   }, [setChatSelectionVisible]);
 
   useEffect(() => {
-    friends.forEach(friend => {
-      const storedFriendData = localStorage.getItem(friend.name);
-      if (storedFriendData) {
-        const parsedData = JSON.parse(storedFriendData);
-        if (parsedData && parsedData.lastMessage) {
-          displayMessages(parsedData);
-        }
-      }
-    });
-  }, [friends]);
-
-  const displayMessages = friend => {
-    const randomNumber = Math.floor(Math.random() * 100);
-    const badge = randomNumber === 0 ? '✔️✔️' : randomNumber;
-
-    const truncatedMessage = friend.lastMessage.length > 50
-      ? friend.lastMessage.substring(0, 50) + '...'
-      : friend.lastMessage;
-
-    setMessages(prevMessages => [
-      ...prevMessages.filter(msg => msg.whom !== friend.whom),
-      {
-        whom: friend.whom,
-        time: friend.time,
-        lastMessage: truncatedMessage,
-        badge: badge,
-        id: friend.id,
-      }
-    ]);
-
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
-  };
-
-  const saveMessage = message => {
-    const storedMessages = JSON.parse(localStorage.getItem('messages')) || [];
-    console.log(storedMessages);
-    storedMessages.push(message);
-    localStorage.setItem('messages', JSON.stringify(storedMessages));
-  };
-
-  const updateChat = friend => {
-    displayMessages(friend);
-  };
+  }, [chatContainerRef])
 
   useEffect(() => {
-    setTimeout(() => {
-      const chatInfo = {
-        lastMessage: 'Does it work?',
-        id: 4,
-        time: new Date().toLocaleTimeString(),
-        whom: 'User4',
-        isReaded: false,
-      };
-      const message = {
-        sender: 'User4',
-        id: 4,
-        text: 'Does it work?',
-        time: new Date().toLocaleTimeString(),
-        lastMessage: 'Does it work?',
-        whom: 'You',
-      };
-      saveMessage(message);
-      localStorage.setItem('User4', JSON.stringify(chatInfo));
-      updateChat(chatInfo);
-    }, 3000);
-    return;
-  }, []);
+    const url = 'https://vkedu-fullstack-div2.ru/api/user/current/';
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access')}`,
+            'Content-Type': 'application/json',
+        }
+    })
+    .then((response) => {
+        if (!response.ok) {
+            return response.json().then((errorData) => {
+                if (errorData.code === 'token_not_valid') {
+                  alert(`${errorData.detail}`);
+                  navigate('/auth');
+                }
+                throw new Error(`${errorData}`);
+            });
+        }
+        return response.json();
+    })
+    .then((data) => {
+        localStorage.setItem('uuid', data.id);
+    })
+    .catch((error) => {
+      // alert(`${error}`);
+    })
+}, [])
 
   return (
 
     <>
-    <SideBurgerMenu isBurgerMenuVisible={isBurgerMenuVisible} setBurgerMenuVisible={setBurgerMenuVisible}/>
-    
-    <div className='window'>
+      <SideBurgerMenu isBurgerMenuVisible={isBurgerMenuVisible} setBurgerMenuVisible={setBurgerMenuVisible}/>
+      
+      <div className='window'>
 
-      <HeaderChatList setBurgerMenuVisible={setBurgerMenuVisible}/>
+        <HeaderChatList setBurgerMenuVisible={setBurgerMenuVisible}/>
 
-      <div className='chat-container' ref={chatContainerRef}>
-        <div className='messages'>
-          {messages.map((msg, index) => (
-            <Link to={`/chat/${msg.id}`} className='message-link' key={index}>
-              <div className='user-beep'>
-                <img className='avatar' src={profileLinkLogo}/>
-                <div className='user-details'>
-                  <div className='top-container'>
-                    <strong className='user'>{msg.whom}</strong> <small className='time-text'>{msg.time}</small>
-                  </div>
-                  <small className='message-text'>{msg.lastMessage}</small>
-                </div>
-              </div>
-              <div className='badge'>{msg.badge}</div>
-            </Link>
-          ))}
+        <div className='chat-container' ref={chatContainerRef}>
+          <Chats />
+
+          <button className='start-chat-button' onClick={() => setChatSelectionVisible(true)}>
+              <img src={startChatButtonLogo}/>
+          </button>
+
+          {isChatSelectionVisible && (
+            <FriendList modalRef={modalRef} setChatSelectionVisible={setChatSelectionVisible}/>
+          )}
         </div>
-
-        <button className='start-chat-button' onClick={() => setChatSelectionVisible(true)}>
-            <img src={startChatButtonLogo}/>
-        </button>
-
-        {isChatSelectionVisible && (
-          <FriendList modalRef={modalRef} setChatSelectionVisible={setChatSelectionVisible}
-          friends={friends}/>
-        )}
       </div>
-    </div>
     </>
   );
 }

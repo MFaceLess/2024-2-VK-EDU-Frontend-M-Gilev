@@ -20,10 +20,9 @@ const ProfilePage = () => {
   return (
     <div className='profile-page-wrapper'>
 
-      <HeaderProfilePage onSubmit={handleFormSubmit}/>
+      <HeaderProfilePage onSubmit={handleFormSubmit} title={'Edit Progile'}/>
 
       <div className='edit-profile-container'>
-        <img className='avatar' src={profileLinkLogo}/>
         <ProfilePageForm ref={formRef}/>
       </div>
       

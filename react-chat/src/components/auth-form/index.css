@@ -1,4 +1,4 @@
-.profile-form {
+.auth-form {
     min-width: 400px;
     padding: 20px;
     background: white;
@@ -9,7 +9,7 @@
     overflow-y: auto;
 }
 
-.profile-form-group {
+.auth-form-group {
     display: flex;
     flex-direction: column;
     padding: 5px;
@@ -41,6 +41,37 @@ input:focus, textarea:focus {
 #bio {
     resize: none;
     height: 150px;
+}
+
+.register-button {
+    display: inline-block;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-top: 10px;
+}
+
+.register-button:hover {
+    background: linear-gradient(135deg, #2575fc, #6a11cb);
+    transform: translateY(-2px);
+    box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.register-button:active {
+    transform: translateY(0);
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.register-button:focus {
+    outline: none;
+    box-shadow: 0px 0px 0px 4px rgba(98, 0, 238, 0.3);
 }
 
 .avatar-button {
@@ -81,6 +112,11 @@ input:focus, textarea:focus {
     color: #888;
 }
 
+.avatar-container {
+    display: flex;
+    justify-content: center;
+}
+
 .toggle-form {
     margin-top: 20px;
     text-align: center;
@@ -104,17 +140,17 @@ input:focus, textarea:focus {
 }
 
 @media (max-width: 768px) {
-    .profile-form {
+    .auth-form {
         min-width: 0px;
     }
 
-    .profile-form-group {
-        padding: 0;
+    .auth-form-group {
+        padding: 5px;
     }
 }
 
 @media (max-height: 768px) {
-    .profile-form {
+    .auth-form {
         max-height: 500px;
     }
 }

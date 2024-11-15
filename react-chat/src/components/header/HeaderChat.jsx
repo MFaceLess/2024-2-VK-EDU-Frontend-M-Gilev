@@ -17,11 +17,11 @@ export const HeaderChat = ({ user }) => {
         </Link>
 
         <div className='profile-link'>
-          <img src={profileLinkLogo}/>
+          <img src={user.avatar || profileLinkLogo}/>
         </div>
 
         <div className='user-info'>
-          <h3>{user || 'User'}</h3>
+          <h3>{user.first_name + ' ' +  user.last_name || 'User'}</h3>
           <p>last seen 2 hours ago</p>
         </div>
 
