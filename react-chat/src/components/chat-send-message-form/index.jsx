@@ -1,8 +1,11 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { useRecorder } from '../recorder';
+
 import sendButtonLogo from '/sendButton.svg'
 import attachButtonLogo from '/attachButton.svg'
+import microLogo from '/micro.svg'
 
 import './index.css'
 
@@ -12,10 +15,11 @@ export const ChatSendMessageForm = ({ setMessages, id, setImages, setIsModalOpen
     const [showMenu, setShowMenu] = useState(false);
     const timeoutId = useRef(null);
 
-    const [isRecording, setIsRecording] = useState(false);
-    const mediaRecorderRef = useRef(null);
-    const audioChunksRef = useRef([]);
-    
+    // const [isRecording, setIsRecording] = useState(false);
+    // const mediaRecorderRef = useRef(null);
+    // const audioChunksRef = useRef([]);
+
+    const [audio, setAudio, isRecording, startRecording, stopRecording] = useRecorder();
 
     const sendMessageHandler = async (audioFile = null) => {
       if (!input.trim() && !audioFile) return;
@@ -49,8 +53,7 @@ export const ChatSendMessageForm = ({ setMessages, id, setImages, setIsModalOpen
         // await updateMes();
         setInput('');
       } catch (error) {
-        alert(error);
-        navigate('/auth');
+        navigate('/');
       }
     };
 
@@ -92,84 +95,111 @@ export const ChatSendMessageForm = ({ setMessages, id, setImages, setIsModalOpen
       setIsModalOpen(true);
     };
 
-    const handleVoiceStart = () => {
-      setIsRecording(true);
-      audioChunksRef.current = [];
+    // const handleVoiceStart = () => {
+    //   setIsRecording(true);
+    //   audioChunksRef.current = [];
 
-      navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-        mediaRecorderRef.current = new MediaRecorder(stream);
-        mediaRecorderRef.current.ondataavailable = (event) => {
-            audioChunksRef.current.push(event.data);
-        };
-        mediaRecorderRef.current.start();
-      }).catch((error) => {
-          alert("Не удалось получить доступ к микрофону.");
-          console.error(error);
-      });
-    }
+    //   navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+    //     mediaRecorderRef.current = new MediaRecorder(stream);
+    //     mediaRecorderRef.current.ondataavailable = (event) => {
+    //         audioChunksRef.current.push(event.data);
+    //     };
+    //     mediaRecorderRef.current.start();
+    //   }).catch((error) => {
+    //       alert("Не удалось получить доступ к микрофону.");
+    //       console.error(error);
+    //   });
+    // }
 
-    const handleVoiceStop = () => {
-      setIsRecording(false);
-      if (!mediaRecorderRef.current) return;
-      mediaRecorderRef.current.stop();
-      mediaRecorderRef.current.onstop = async () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/ogg" });
-        console.log(audioBlob);
-        await sendMessageHandler(audioBlob);
+    // const handleVoiceStop = () => {
+    //   setIsRecording(false);
+    //   if (!mediaRecorderRef.current) return;
+    //   mediaRecorderRef.current.stop();
+    //   mediaRecorderRef.current.onstop = async () => {
+    //     const audioBlob = new Blob(audioChunksRef.current, { type: "audio/ogg" });
+    //     console.log(audioBlob);
+    //     await sendMessageHandler(audioBlob);
+    //   };
+    // }
+
+    const handleVoiceStop = async () => {
+      stopRecording();
+      if (audio) {
+        await sendMessageHandler(audio);
+        setAudio(null);
+      }
     };
-    }
 
     return (
+      <>
+
         <form className='form' onSubmit={handleSubmit}>
             <input
-            className='form-input'
-            name='message-text'
-            placeholder='Write a message...'
-            autoComplete='off'
-            type='text'
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
+              className='form-input'
+              name='message-text'
+              placeholder='Write a message...'
+              autoComplete='off'
+              type='text'
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
             />
-            <button className='send-button'>
+
+            {input.length > 0 && (
+              <button className='send-button'>
                 <img src={sendButtonLogo}/>
-            </button>
+              </button>
+            )}
             
-            {showMenu &&
-              <div
-                onMouseEnter={handleMouseEnter} 
-                onMouseLeave={handleMouseLeave}
-                className='attach-menu'
-              >
-                <ul>
-                  <li onClick={sendLocation}>Location</li>
-                  <li>
-                    <label htmlFor="file-input">Send Photo</label>
-                    <input 
-                      id="file-input" 
-                      type="file" 
-                      multiple 
-                      accept="image/*" 
-                      style={{ display: 'none', cursor: 'pointer'}} 
-                      onChange={handleImageSelect} 
-                    />
-                  </li>
-                  <li
-                    onMouseDown={handleVoiceStart}
-                    onMouseUp={handleVoiceStop}
-                    className={isRecording ? 'recording' : ''}
-                  >
-                    Voice
-                  </li>
-                </ul>
-              </div>
-            }
+            <button
+              onMouseDown={startRecording}
+              onMouseUp={handleVoiceStop}
+              onMouseLeave={handleVoiceStop}
+              className={`micro ${isRecording ? 'recording' : ''}`}
+            >
+              <img src={microLogo}/>
+            </button>
+
             <button 
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
               className='attach-button'
             >
-                <img src={attachButtonLogo}/>
+              <img src={attachButtonLogo}/>
             </button>
+
         </form>
+
+        {showMenu &&
+          <div
+            onMouseEnter={handleMouseEnter} 
+            onMouseLeave={handleMouseLeave}
+            className='attach-menu'
+          >
+            <ul>
+                <li onClick={sendLocation} style={{ userSelect: 'none' }}>Location</li>
+                <li>
+                  <label htmlFor='attach-img'>
+                    Send Photo
+                  </label>
+                  <input 
+                    id="attach-img" 
+                    type="file" 
+                    multiple 
+                    accept="image/*" 
+                    style={{ display: 'none'}} 
+                    onChange={handleImageSelect} 
+                  />
+                </li>
+                {/* <li
+                  onMouseDown={handleVoiceStart}
+                  onMouseUp={handleVoiceStop}
+                  className={isRecording ? 'recording' : ''}
+                >
+                  Voice
+                </li> */}
+            </ul>
+          </div>
+        }
+      </>
     );
 };

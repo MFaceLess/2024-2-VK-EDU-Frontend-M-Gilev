@@ -11,11 +11,10 @@
     height: 50px;
 }
 
-.form:active {
+/* .form:active {
     background-color: rgba(50, 50, 50, 0.7);
     box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
-    transform: scale(1.01);
-}
+} */
 
 .form-input {
     flex: 1;
@@ -25,20 +24,54 @@
     outline: none;
 }
 
-.attach-button, .send-button {
+.attach-button, .send-button, .micro {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: none;
     border: none;
     cursor: pointer;
-    padding-left: 10px;
+    padding: 10px;
 }
 
-.attach-button img, .send-button img {
+.attach-button img, .send-button img, .micro img {
+    pointer-events: none;
     transform: scale(2);
 }
 
-.attach-button:hover, .send-button:hover {
-    filter: brightness(0.1);
-    opacity: 2;
+.attach-button:hover, .send-button:hover, .micro:hover {
+    background-color: #cdc9c9;
+    border-radius: 20%;
+}
+
+.micro.recording {
+    position: relative;
+    border-radius: 20%;
+    transform: scale(1.2);
+}
+
+.micro.recording::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 30px;
+  height: 30px;
+  border: 2px solid red;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  animation: pulse-wave 1.5s infinite ease-out;
+}
+
+@keyframes pulse-wave {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0;
+  }
 }
 
 input {
@@ -52,13 +85,13 @@ input {
     bottom: 60px;
     right: 40px;
     background-color: #fff;
-    border: 1px solid #DAAD86;
+    border: 1px solid #768fdf;
     border-radius: 8px;
-    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
-    padding: 8px 0;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 1);
     z-index: 10;
-    width: 120px;
     animation: fadeIn 0.3s ease;
+    height: auto;
+    width: 100px;
 }
 
 @keyframes fadeIn {
@@ -78,21 +111,35 @@ input {
     padding: 0;
 }
 
+.attach-menu li + li {
+    border-top: 1px solid #bdc9ea;
+}
+
 .attach-menu li {
+    position: relative;
     display: flex;
+    align-items: center;
     justify-content: center;
-    padding: 10px 15px;
+    padding: 15px 15px 15px 15px;
     cursor: pointer;
     font-size: 14px;
     color: #333;
     transition: background-color 0.3s ease, color 0.3s ease;
     height: 40px;
-    display: flex;
-    align-items: center;
-    box-sizing: border-box;
 }
 
 .attach-menu label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin: 0;
+    user-select: none;
     font-weight: normal;
 }
 
@@ -101,7 +148,16 @@ input {
     color: #fff;
 }
 
-.recording {
-    background-color: red !important;
-    font-weight: bold;
+.attach-menu li:active {
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 1);
+}
+
+.attach-menu li:first-child:hover {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.attach-menu li:last-child:hover {
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
 }

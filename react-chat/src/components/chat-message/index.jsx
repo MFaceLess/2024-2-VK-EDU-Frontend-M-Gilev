@@ -2,9 +2,11 @@ import React, { useEffect } from 'react';
 
 import './index.css'
 
-export const Message = ({sender, time, text, senderId, files, voice}) => {
+export const Message = ({sender, time, text, senderId, files, voice, onContextMenu}) => {
     return (
-        <div className={`message ${senderId === localStorage.getItem('uuid') ? 'you' : 'opponent'}`}>
+        <div className={`message ${senderId === localStorage.getItem('uuid') ? 'you' : 'opponent'}`}
+            onContextMenu={(event) => onContextMenu(event)}
+        >
         <strong className='message-text'>{sender}</strong> <small className='message-text'>{time}</small>
         <p className='message-text'>{text}</p>
         { voice && (
@@ -14,12 +16,12 @@ export const Message = ({sender, time, text, senderId, files, voice}) => {
             </audio>
         )}
         {files.length > 0 && (
-                <div className="message-images">
-                    {files.map((file, index) => (
-                        <img key={index} src={file} alt={`image-${index}`} className="message-image" />
-                    ))}
-                </div>
-            )}
+            <div className="message-images">
+                {files.map((file, index) => (
+                    <img key={index} src={file} alt={`image-${index}`} className="message-image" />
+                ))}
+            </div>
+        )}
         </div>
     );
 };

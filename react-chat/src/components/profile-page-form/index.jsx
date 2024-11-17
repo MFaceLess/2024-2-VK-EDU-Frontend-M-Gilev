@@ -112,6 +112,26 @@ export const ProfilePageForm = forwardRef((props, ref) => {
         })
     }
 
+    const handleDeleteProfile = async () => {
+        try {
+            const response = await fetch(`https://vkedu-fullstack-div2.ru/api/user/${localStorage.getItem('uuid')}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('access')}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData?.detail || 'Ошибка при удалении сообщения');
+            }
+            navigate('/auth');
+        } catch (error) {
+            alert(error);
+            navigate('/');
+        }
+    }
+
     return (
         <form ref={ref} className='profile-form' onSubmit={handleSubmit}>
             
@@ -187,6 +207,10 @@ export const ProfilePageForm = forwardRef((props, ref) => {
                 />
                 <small className='hint'>Any details about you</small>
             </div>
+
+            <button className='register-button' onClick={handleDeleteProfile}>
+                Delete profile
+            </button>
 
         </form>
     );
