@@ -287,7 +287,7 @@ const Chat = () => {
       )}
       <div className='chat-container' ref={chatContainerRef} onDrop={handleDrop} onDragOver={handleDragOver}>
 
-        {contextMenu.visible && (
+        {contextMenu.visible && !isModalOpen && (
           <div 
             className="context-menu" 
             style={{ top: contextMenu.y, left: contextMenu.x }} 
