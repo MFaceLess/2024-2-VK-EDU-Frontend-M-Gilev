@@ -60,13 +60,24 @@
     animation: slide-in-left 0.5s forwards;
 }
 
-/* .message-image {
-    width: 70%;
-} */
+.message-images {
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+}
+
+.message-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: min(500px, 70%);
+    height: min(500px, 70%);
+}
 
 @media (max-width: 900px) {
     .message-image {
-        width: 50%;
+        width: (450px, 50%);
+        height: min(500px, 70%);
     }
 }
   
