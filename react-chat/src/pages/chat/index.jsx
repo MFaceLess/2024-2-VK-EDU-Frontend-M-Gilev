@@ -6,25 +6,33 @@ import { Message } from '../../components/chat-message';
 import { HeaderChat } from '../../components/header';
 import { SendPhotosForm } from '../../components/send_photos';
 
+import { useDispatch, useSelector } from 'react-redux';
+import { setMessages, addMessages, setChatId, setContextMenu} from '../../redux/slices/chatSlice';
+
 import { Centrifuge } from 'centrifuge';
 
 
 import './index.css';
+import { fetchMessages } from '../../entityes/fetchMessages';
 
 const Chat = () => {
   const navigate = useNavigate();
+
   const location = useLocation();
   const friend = location.state?.friend;
-  const [chatId, setChatId] = useState(null);
-  const [messages, setMessages] = useState([]);
+  // const [chatId, setChatId] = useState(null);
+  // const [messages, setMessages] = useState([]);
   const chatContainerRef = useRef(null);
   const messagesRef = useRef([]);
   const [images, setImages] = useState(null);
 
 
-  const [contextMenu, setContextMenu] = useState({  visible: false, x: 0, y: 0, messageId: null})
+  // const [contextMenu, setContextMenu] = useState({  visible: false, x: 0, y: 0, messageId: null})
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef(null);
+
+  const dispatch = useDispatch();
+  const { messages, chatId, contextMenu } = useSelector((state) => state.chat)
 
   //Обработка закрытия модалки
   useEffect(() => {
@@ -65,7 +73,7 @@ const Chat = () => {
         );
 
         if (existingChat) {
-          setChatId(existingChat.id);
+          dispatch(setChatId(existingChat.id));
         }
         // } else {
         //   createChat();
@@ -91,7 +99,7 @@ const Chat = () => {
     })
     .then(response => response.json())
     .then(data => {
-      setChatId(data.id);
+      dispatch(setChatId(data.id));
       console.log(chatId);
       alert('Чат успешно создан!');
     })
@@ -101,44 +109,31 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    const chatContainer = chatContainerRef.current;
+    if (chatContainer) {
+      chatContainer.scrollTop = chatContainer.scrollHeight;
     }
   }, [messages]);
 
   useEffect(() => {
     if (!chatId) return;
-    const chat = chatId;
-    const page_size = 150;
-    const params = new URLSearchParams({ chat, page_size });
-    fetch(`https://vkedu-fullstack-div2.ru/api/messages/?${params.toString()}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('access')}`,
-        'Content-Type': 'application/json',
-      },
-    })
-    .then((response) => response.json())
-    .then((data) => {
-      const mesElem = data.results.reverse().map((message) => ({
-        'sender': message.sender.first_name + ' ' + message.sender.last_name,
-        'time': new Date(message.created_at).toLocaleString(),
-        'text': message.text,
-        'id': message.id,
-        'senderId': message.sender.id,
-        'files': message.files ? message.files.map(file => {return file.item}) : [],
-        'voice': message.voice,
-      }));
-      const newMessages = mesElem.filter(msg => !messagesRef.current.some(m => m.id === msg.id));
-      if (newMessages.length > 0) {
-        messagesRef.current = [...messagesRef.current, ...newMessages];
-        setMessages((prevMessages) => [...prevMessages, ...newMessages]);
-      }
-    })
-    .catch((error) => {
-      // alert(error);
-    })
-  }, [chatId])
+    dispatch(fetchMessages({chatId}))
+      .unwrap()
+      .then((messages) => {
+        const newMessages = messages.filter(
+          (msg) => !messagesRef.current.some((m) => m.id === msg.id)
+        );
+
+        if (newMessages.length > 0) {
+            messagesRef.current = [...messagesRef.current, ...newMessages];
+            dispatch(setMessages(messagesRef.current));
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching messages:', error);
+      });
+
+  }, [chatId, dispatch])
 
   const { id } = useParams();
 
@@ -185,7 +180,7 @@ const Chat = () => {
           files: message.files ? message.files.map(file => {return file.item}) : [],
           voice: message.voice ? message.voice : null,
         };
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
+        dispatch(addMessages(newMessage));
         messagesRef.current = [...messagesRef.current, newMessage];
       } else if (event === 'delete') {
         setMessages((prevMessages) => prevMessages.filter((elem) => elem.id !== message.id));
@@ -222,28 +217,28 @@ const Chat = () => {
       x = windowWidth - menuWidth;
     }
 
-    setContextMenu({
+    dispatch(setContextMenu({
       visible: true,
       x,
       y,
       messageId,
-    });
+    }));
   };
 
   const handleCloseMenu = () => {
-    setContextMenu({ visible: false, x: 0, y: 0, messageId: null });
+    dispatch(setContextMenu({ visible: false, x: 0, y: 0, messageId: null }));
   };
 
   useEffect(() => {
     const clickOutside = (event) => {
       if (!event.target.closest('.context-menu')) {
-        setContextMenu({ visible: false, x: 0, y: 0, messageId: null });
+        dispatch(setContextMenu({ visible: false, x: 0, y: 0, messageId: null }));
       }
     };
   
     const escDown = (event) => {
       if (event.key === 'Escape') {
-        setContextMenu({ visible: false, x: 0, y: 0, messageId: null });
+        dispatch(setContextMenu({ visible: false, x: 0, y: 0, messageId: null }));
       }
     };
   
