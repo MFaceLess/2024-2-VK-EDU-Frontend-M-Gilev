@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { ConvertDateToString } from '../../entityes/utils/convertDateToString';
 
 import './index.css'
 
@@ -7,7 +8,7 @@ export const Message = ({sender, time, text, senderId, files, voice, onContextMe
         <div className={`message ${senderId === localStorage.getItem('uuid') ? 'you' : 'opponent'}`}
             onContextMenu={(event) => onContextMenu(event)}
         >
-        <strong className='message-text'>{sender}</strong> <small className='message-text'>{time}</small>
+        <strong className='message-text'>{sender}</strong> <small className='message-text'>{ConvertDateToString.convDateToStringFormat(time)}</small>
         <p className='message-text'>{text}</p>
         { voice && (
             <audio controls className="message-audio">

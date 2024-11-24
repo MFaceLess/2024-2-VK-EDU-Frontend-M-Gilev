@@ -32,6 +32,9 @@
     margin: 10px;
     padding: 4px;
 
+    height: auto;
+    width: auto;
+
     background-color: #e7c2a2;
     border-radius: 10px;
     padding: 10px;
@@ -50,6 +53,9 @@
     margin: 10px;
     padding: 4px;
 
+    height: auto;
+    width: auto;
+
     background-color: #e7b68a8a;
     border-radius: 10px;
     padding: 10px;
@@ -63,21 +69,24 @@
 .message-images {
     display: flex;
     align-items: center;
-    justify-content: center; 
+    justify-content: center;
+    gap: 4px;
 }
 
 .message-image {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: min(500px, 70%);
-    height: min(500px, 70%);
+    height: auto;
+    width: auto;
+    max-width: 70%;
+    max-height: 70%;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1000px) {
     .message-image {
-        width: (450px, 50%);
-        height: min(500px, 70%);
+        width: 50%;
+        height: 70%;
     }
 }
   

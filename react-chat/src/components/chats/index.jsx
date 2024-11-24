@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'
 import { Centrifuge } from 'centrifuge';
+import { ConvertDateToString } from '../../entityes/utils/convertDateToString';
 
 import profileLinkLogo from '/profileLink.svg';
 
@@ -176,7 +177,7 @@ export const Chats = () => {
             </div>
             <div className='user-details'>
               <div className='top-container'>
-                <strong className='user'>{msg.title}</strong> <small className='time-text'>{new Date(msg.updated_at).toLocaleString()}</small>
+                <strong className='user'>{msg.title}</strong> <small className='time-text'>{ConvertDateToString.convDateToStringFormat((new Date(msg.updated_at).toLocaleString()))}</small>
               </div>
               <small className='message-text_corrected'>
                 {msg.last_message?.text ||  (msg.last_message?.voice? 'Голосовое сообщение' : msg.last_message?.files.length !== 0 ? 'Изображения: images' : 'Нет сообщений')}

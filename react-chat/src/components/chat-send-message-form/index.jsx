@@ -9,7 +9,7 @@ import microLogo from '/micro.svg'
 
 import './index.css'
 
-export const ChatSendMessageForm = ({ setMessages, id, setImages, setIsModalOpen }) => {
+export const ChatSendMessageForm = ({ id, setImages, setIsModalOpen }) => {
     const navigate = useNavigate();
     const [input, setInput] = useState('');
     const [showMenu, setShowMenu] = useState(false);

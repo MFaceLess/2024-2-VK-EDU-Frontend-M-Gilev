@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 
 import { ChatSendMessageForm } from '../../components/chat-send-message-form';
 import { Message } from '../../components/chat-message';
@@ -7,32 +7,31 @@ import { HeaderChat } from '../../components/header';
 import { SendPhotosForm } from '../../components/send_photos';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { setMessages, addMessages, setChatId, setContextMenu} from '../../redux/slices/chatSlice';
+import { setMessages, setChatId, setContextMenu, removeMessages} from '../../redux/slices/chatSlice';
 
-import { Centrifuge } from 'centrifuge';
-
+import loadingLogo from '/loadingLogo.svg'
 
 import './index.css';
 import { fetchMessages } from '../../entityes/fetchMessages';
+import { startDialog } from '../../entityes/fetchStartDialog';
+import { setupCentrifugo } from '../../entityes/centrifuge';
 
 const Chat = () => {
-  const navigate = useNavigate();
-
+  //Получаем id Chat
+  const { id } = useParams();
+  
   const location = useLocation();
   const friend = location.state?.friend;
-  // const [chatId, setChatId] = useState(null);
-  // const [messages, setMessages] = useState([]);
+
   const chatContainerRef = useRef(null);
-  const messagesRef = useRef([]);
   const [images, setImages] = useState(null);
 
 
-  // const [contextMenu, setContextMenu] = useState({  visible: false, x: 0, y: 0, messageId: null})
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef(null);
 
   const dispatch = useDispatch();
-  const { messages, chatId, contextMenu } = useSelector((state) => state.chat)
+  const { messages, chatId, contextMenu, loading, chatExist } = useSelector((state) => state.chat)
 
   //Обработка закрытия модалки
   useEffect(() => {
@@ -84,28 +83,8 @@ const Chat = () => {
       });
   }, [friend]);
 
-  const startDialog = () => {
-    fetch('https://vkedu-fullstack-div2.ru/api/chats/', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('access')}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        'members': [friend.id],
-        'is_private': true,
-        'title': 'bug',
-      }),
-    })
-    .then(response => response.json())
-    .then(data => {
-      dispatch(setChatId(data.id));
-      console.log(chatId);
-      alert('Чат успешно создан!');
-    })
-    .catch(error => {
-      alert(`${error}`);
-    });
+  const handleStartDialog = () => {
+    dispatch(startDialog(friend.id));
   };
 
   useEffect(() => {
@@ -116,81 +95,15 @@ const Chat = () => {
   }, [messages]);
 
   useEffect(() => {
-    if (!chatId) return;
-    dispatch(fetchMessages({chatId}))
-      .unwrap()
-      .then((messages) => {
-        const newMessages = messages.filter(
-          (msg) => !messagesRef.current.some((m) => m.id === msg.id)
-        );
+    if (!id) return;
+    dispatch(fetchMessages(id))
+  }, [id])
 
-        if (newMessages.length > 0) {
-            messagesRef.current = [...messagesRef.current, ...newMessages];
-            dispatch(setMessages(messagesRef.current));
-        }
-      })
-      .catch((error) => {
-        console.error('Error fetching messages:', error);
-      });
-
-  }, [chatId, dispatch])
-
-  const { id } = useParams();
 
   useEffect(() => {
-    const centrifuge = new Centrifuge('wss://vkedu-fullstack-div2.ru/connection/websocket/', {
-      getToken: (ctx) =>
-        fetch('https://vkedu-fullstack-div2.ru/api/centrifugo/connect/', {
-          body: JSON.stringify(ctx),
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('access')}`,
-            'Content-Type': 'application/json',
-          },
-        })
-        .then((res) => res.json())
-        .then((data) => data.token)
-    });
-
-    const subscription = centrifuge.newSubscription(localStorage.getItem('uuid'), {
-      getToken: (ctx) =>
-        fetch('https://vkedu-fullstack-div2.ru/api/centrifugo/subscribe/', {
-          body: JSON.stringify(ctx),
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('access')}`,
-            'Content-Type': 'application/json',
-          },
-        })
-        .then((res) => res.json())
-        .then((data) => data.token)
-    });
-
-    subscription.on('publication', (ctx) => {
-      const { event, message } = ctx.data;
-      console.log(message);
-      console.log(event);
-      if (event === 'create') {
-        const newMessage = {
-          sender: `${message.sender.first_name} ${message.sender.last_name}`,
-          time: new Date(message.created_at).toLocaleString(),
-          text: message.text,
-          id: message.id,
-          senderId: message.sender.id,
-          files: message.files ? message.files.map(file => {return file.item}) : [],
-          voice: message.voice ? message.voice : null,
-        };
-        dispatch(addMessages(newMessage));
-        messagesRef.current = [...messagesRef.current, newMessage];
-      } else if (event === 'delete') {
-        setMessages((prevMessages) => prevMessages.filter((elem) => elem.id !== message.id));
-      }
-    });
-
-    subscription.subscribe();
-    centrifuge.connect();
-
-    return () => centrifuge.disconnect();
+    if (id) {
+      dispatch(setupCentrifugo(localStorage.getItem('uuid')));
+    }
   }, []);
 
   const handleDrop = (e) => {
@@ -264,7 +177,7 @@ const Chat = () => {
         const errorData = await response.json();
         throw new Error(errorData?.detail || 'Ошибка при удалении сообщения');
       }
-      setMessages((prevMessages) => prevMessages.filter((message) => message.id !== messageId));
+      dispatch(removeMessages(messageId))
     } catch (error) {
       alert(error);
     }
@@ -276,7 +189,7 @@ const Chat = () => {
       {isModalOpen && (
         <div className="modal-background">
           <div className="modal-content" ref={modalRef}>
-            <SendPhotosForm initialImages={images} chatId={chatId} setIsModalOpen={setIsModalOpen}/>
+            <SendPhotosForm initialImages={images} chatId={id} setIsModalOpen={setIsModalOpen}/>
           </div>
         </div>
       )}
@@ -292,7 +205,9 @@ const Chat = () => {
           </div>
         )}
 
-        {messages.map((message, index) => (
+        {loading && <div className='loadingLogo'><img src={loadingLogo}/></div>}
+
+        {!loading && chatExist && messages.map((message, index) => (
             <Message
               sender={message.sender}
               time={message.time}
@@ -307,10 +222,10 @@ const Chat = () => {
         ))}
       </div>
       <div className="chat-footer">
-        {!chatId && (
-          <button className="register-button" onClick={startDialog}>Начать диалог</button>
+        {!chatExist && (
+          <button className="register-button" onClick={handleStartDialog}>Начать диалог</button>
         )}
-        {chatId && <ChatSendMessageForm setMessages={setMessages} id={chatId} setImages={setImages} setIsModalOpen={setIsModalOpen}/>}
+        {chatExist && <ChatSendMessageForm setMessages={setMessages} id={chatId} setImages={setImages} setIsModalOpen={setIsModalOpen}/>}
       </div>
     </div>
   );

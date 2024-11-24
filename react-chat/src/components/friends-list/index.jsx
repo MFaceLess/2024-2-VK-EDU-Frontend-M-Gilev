@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, createRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { debounce } from 'lodash'
+import debounce from 'lodash.debounce'
 
 import closeButtonLogo from '/closeButton.svg';
 import profileLinkLogo from '/profileLink.svg';

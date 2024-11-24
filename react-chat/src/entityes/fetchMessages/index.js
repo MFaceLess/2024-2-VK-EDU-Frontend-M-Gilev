@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 export const fetchMessages = createAsyncThunk(
     'chat/fetchMessages',
-    async ({ chatId }, { rejectWithValue }) => {
+    async (chatId) => {
         try {
             const chat = chatId;
             const page_size = 150;

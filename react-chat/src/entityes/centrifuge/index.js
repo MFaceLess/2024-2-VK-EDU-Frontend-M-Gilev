@@ -1,8 +1,16 @@
 import { Centrifuge } from 'centrifuge';
-import { addMessages, removeMessages } from '../../redux/slices/chatSlice';
+import { addMessages, removeMessages, setMessages } from '../../redux/slices/chatSlice';
+
+
+let centrifugeInstance = null;
 
 export const setupCentrifugo = (uuid) => (dispatch) => {
-  const centrifuge = new Centrifuge('wss://vkedu-fullstack-div2.ru/connection/websocket/', {
+
+  if (centrifugeInstance) {
+    return () => {};
+  }
+
+  centrifugeInstance = new Centrifuge('wss://vkedu-fullstack-div2.ru/connection/websocket/', {
     getToken: (ctx) =>
       fetch('https://vkedu-fullstack-div2.ru/api/centrifugo/connect/', {
         body: JSON.stringify(ctx),
@@ -16,7 +24,7 @@ export const setupCentrifugo = (uuid) => (dispatch) => {
         .then((data) => data.token),
   });
 
-  const subscription = centrifuge.newSubscription(uuid, {
+  const subscription = centrifugeInstance.newSubscription(uuid, {
     getToken: (ctx) =>
       fetch('https://vkedu-fullstack-div2.ru/api/centrifugo/subscribe/', {
         body: JSON.stringify(ctx),
@@ -30,7 +38,7 @@ export const setupCentrifugo = (uuid) => (dispatch) => {
         .then((data) => data.token),
   });
 
-  subscription.on('publication', (ctx) => {
+  const handleCentrifugePush = (ctx) => {
     const { event, message } = ctx.data;
 
     if (event === 'create') {
@@ -47,10 +55,14 @@ export const setupCentrifugo = (uuid) => (dispatch) => {
     } else if (event === 'delete') {
       dispatch(removeMessages(message.id));
     }
-  });
+  };
 
+  subscription.on('publication', handleCentrifugePush);
   subscription.subscribe();
-  centrifuge.connect();
-
-  return () => centrifuge.disconnect();
-};
+  centrifugeInstance.connect();
+  
+  return () => {
+    centrifuge.disconnect();
+    centrifugeInstance = null;
+  }
+}
