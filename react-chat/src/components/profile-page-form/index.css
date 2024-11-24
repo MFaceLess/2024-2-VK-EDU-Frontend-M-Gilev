@@ -56,6 +56,8 @@ input:focus, textarea:focus {
     overflow: hidden;
     position: relative;
     transition: border-color 0.3s;
+
+    z-index: 5;
 }
 
 .avatar-button.has-image {
@@ -117,4 +119,45 @@ input:focus, textarea:focus {
     .profile-form {
         max-height: 500px;
     }
+}
+
+.delete-button {
+    display: inline-block;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(135deg, #cb1149, #950a38bd);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-top: 10px;
+}
+
+.delete-button:hover {
+    background: linear-gradient(135deg, #950a38bd, #cb1149);
+    transform: translateY(-2px);
+    box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.delete-button:active {
+    transform: translateY(0);
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.delete-button:focus {
+    outline: none;
+    box-shadow: 0px 0px 0px 4px rgba(98, 0, 238, 0.3);
+}
+
+.overlay-message-box {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgb(0, 0, 0, 0.5);
+    z-index: 999;
 }

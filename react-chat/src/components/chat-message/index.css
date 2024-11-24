@@ -32,7 +32,7 @@
     margin: 10px;
     padding: 4px;
 
-    background-color: #DAAD86;
+    background-color: #e7c2a2;
     border-radius: 10px;
     padding: 10px;
     max-width: 70%;
@@ -50,7 +50,7 @@
     margin: 10px;
     padding: 4px;
 
-    background-color: #DAAD86;
+    background-color: #e7b68a8a;
     border-radius: 10px;
     padding: 10px;
     max-width: 70%;
@@ -59,3 +59,25 @@
 
     animation: slide-in-left 0.5s forwards;
 }
+
+.message-images {
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+}
+
+.message-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: min(500px, 70%);
+    height: min(500px, 70%);
+}
+
+@media (max-width: 900px) {
+    .message-image {
+        width: (450px, 50%);
+        height: min(500px, 70%);
+    }
+}
+  

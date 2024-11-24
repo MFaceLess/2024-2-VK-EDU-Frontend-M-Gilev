@@ -85,3 +85,18 @@
     transform: scale(1.9);
     margin-right: 20px;
 }
+
+.find-user {
+    border: 3px solid #8E592C;
+    border-radius: 10px;
+}
+
+.find-user > input {
+    background-color: #e6ccb6;
+}
+
+.find-user > input:focus {
+    box-shadow:none;
+    outline: none;
+    border: none;
+}

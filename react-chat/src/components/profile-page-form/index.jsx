@@ -3,6 +3,7 @@ import React, { forwardRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 
 import './index.css'
+import { MessageBox } from '../message-box';
 
 export const ProfilePageForm = forwardRef((props, ref) => {
     const navigate = useNavigate();
@@ -16,6 +17,8 @@ export const ProfilePageForm = forwardRef((props, ref) => {
     const [avatarFile, setAvatarFile] = useState(null);
 
     const [usernameColor, setUserNameColor] = useState('#ccc');
+
+    const [confirmDelete, setConfirmDelete] = useState(false);
 
     const handleAvatarChange = (e) => {
         const file = e.target.files[0];
@@ -112,7 +115,34 @@ export const ProfilePageForm = forwardRef((props, ref) => {
         })
     }
 
+    // const handleDeleteProfile = async () => {
+    //     try {
+    //         const response = await fetch(`https://vkedu-fullstack-div2.ru/api/user/${localStorage.getItem('uuid')}`, {
+    //             method: 'DELETE',
+    //             headers: {
+    //                 'Authorization': `Bearer ${localStorage.getItem('access')}`,
+    //                 'Content-Type': 'application/json',
+    //             },
+    //         });
+    //         if (!response.ok) {
+    //             const errorData = await response.json();
+    //             throw new Error(errorData?.detail || 'Ошибка при удалении сообщения');
+    //         }
+    //         navigate('/auth');
+    //     } catch (error) {
+    //         alert(error);
+    //         navigate('/');
+    //     }
+    // }
+
     return (
+        <>
+        {confirmDelete && (
+            <>
+                <div className="overlay-message-box" onClick={() => setConfirmDelete(false)}></div>
+                <MessageBox text={"Are you sure to DELETE your profile?"} setVisible={setConfirmDelete} />
+            </>
+        )}
         <form ref={ref} className='profile-form' onSubmit={handleSubmit}>
             
             <div className='profile-form-group'>
@@ -188,6 +218,15 @@ export const ProfilePageForm = forwardRef((props, ref) => {
                 <small className='hint'>Any details about you</small>
             </div>
 
+            <button className='delete-button' onClick={(e) => {
+                e.preventDefault();
+                setConfirmDelete(true);
+            }}>
+                Delete profile
+            </button>
+
         </form>
+
+        </>
     );
 });
