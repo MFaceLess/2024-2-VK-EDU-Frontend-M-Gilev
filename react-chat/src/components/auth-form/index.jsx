@@ -1,8 +1,10 @@
 import React, { forwardRef, useEffect, useState } from 'react';
-
 import { useNavigate } from 'react-router-dom';
+import { fetchRegister } from '../../entityes/API/auth/fetchRegister';
 
 import './index.css'
+import { useDispatch } from 'react-redux';
+import { fetchAuth } from '../../entityes/API/auth/fetchAuth';
 
 export const AuthForm = forwardRef((props, ref) => {
     const navigate = useNavigate();
@@ -15,7 +17,8 @@ export const AuthForm = forwardRef((props, ref) => {
     const [password, setPassword] = useState('');
     const [avatar, setAvatar] = useState(null);
   
-    
+    const dispatch = useDispatch();
+
     //Фронтенд ошибок
     const [usernameColor, setUserNameColor] = useState('#ccc'); 
     const [passwordColor, setPasswordColor] = useState('#ccc');
@@ -32,112 +35,54 @@ export const AuthForm = forwardRef((props, ref) => {
         setPasswordError('');
     }, [isLogin])
 
-    // useEffect(() => {
-    //     if (validateUsername(username) === true) {
-    //         setUserNameColor('#ccc');
-    //     } else {
-    //         setUserNameColor('red');
-    //     }
-    // }, [username])
-
-    // const validateUsername = (username) => {
-    //     if (username.length < 1 || username.length > 150) {
-    //         return false;
-    //     }
-    //     const pattern = /^[\w.@+-]+$/;
-    //     return pattern.test(username);
-    // }
-
-    const registerUser = () => {
+    const registerUser = async () => {
         const formData = new FormData();
         formData.append('username', username);
         formData.append('password', password);
         formData.append('first_name', firstName);
         formData.append('last_name', lastName);
-        if (bio) {
-            formData.append('bio', bio);
-        }
-        if (avatar) {
-            formData.append('avatar', avatar);
-        }
+        formData.append('bio', bio || '');
+        if (avatar) formData.append('avatar', avatar);
 
-        // const res = await fetch('https://vkedu-fullstack-div2.ru/api/register/', {
-        //     method: 'POST',
-        //     body: formData,
-        // })
-
-        // const json = await res.json();
-        // alert(json);
-
-        fetch('https://vkedu-fullstack-div2.ru/api/register/', {
-            method: 'POST',
-            body: formData,
-        })
-        .then((response) => {
-            if (!response.ok) {
-                return response.json().then((errorData) => {
-                    for (var key in errorData) {
-                        errorData[key].forEach((error) => {
-                            switch (key) {
-                                case 'password':
-                                    setPasswordColor('red');
-                                    setPasswordError(error);
-                                    break;
-                                case 'username':
-                                    setUserNameColor('red');
-                                    setUsernameError(error);
-                                    break;
-                            }
-                            throw new Error(error);
-                        })
-                    }
-                    // if (errorData.password) {
-                    //     errorData.password.forEach((error, index) => {
-                    //         console.log(`Ошибка пароля ${index + 1}: ${error}`);
-                    //     });
-                    // }
-                    // throw new Error(errorData.message || 'Не удалось зарегистрировать');
-                });
-            }
-            return response.json();
-        })
-        .then((data) => {
+        try {
+            const data = await dispatch(fetchRegister(formData)).unwrap();
             localStorage.setItem('uuid', data.id);
-            alert('Пользователь успешно зарегистрирован!');
-        })
-        .catch((error) => {
-            // alert(`Ошибка: ${error.message}`);
-        })
+            alert('Пользователь успешно зарегиcтрирован!');
+        } catch (errorData) {
+            console.log(errorData)
+            handleErrors(JSON.parse(errorData.message));
+        }
     }
 
-    const loginUser = () => {
-        fetch('https://vkedu-fullstack-div2.ru/api/auth/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({username, password})
-        })
-        .then((response) => {
-            if (!response.ok) {
-                return response.json().then((errorData) => {
-                    setPasswordError(errorData.detail);
-                    setPasswordColor('red');
-                    setUserNameColor('red');
-                    throw new Error(errorData);
-                });
-            }
-            return response.json();
-        })
-        .then((data) => {
-            localStorage.setItem('access', data.access);
-            localStorage.setItem('refresh', data.refresh);
+    const handleErrors = (errorData) => {
+        for (var key in errorData) {
+            errorData[key].forEach((error) => {
+                switch (key) {
+                    case 'password':
+                        setPasswordColor('red');
+                        setPasswordError(error);
+                        break;
+                    case 'username':
+                        setUserNameColor('red');
+                        setUsernameError(error);
+                        break;
+                    default:
+                        break;
+                }
+            });
+        }
+    }
+
+    const loginUser = async () => {
+        try {
+            await dispatch(fetchAuth({username, password})).unwrap();
             alert('You are logged in!');
             navigate('/');
-        })
-        .catch((error) => {
-            // alert(`${error.detail}`);
-        })
+        } catch (errorData) {
+            setPasswordError(JSON.parse(errorData.message).detail);
+            setPasswordColor('red');
+            setUserNameColor('red');
+        }
     }
 
     const handleSubmit = (e) => {

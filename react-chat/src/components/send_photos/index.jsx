@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
+import store from '../../redux/store';
+
 import trashLogo from '/deleteLogo.svg'
 import addLogo from '/addLogo.svg'
 
@@ -33,7 +35,8 @@ export const SendPhotosForm = ({ initialImages = [], chatId, setIsModalOpen }) =
 
     const sendHandler = async () => {
         const formData = new FormData();
-        formData.append('chat', chatId);
+        // store.getState().chat.chatId
+        formData.append('chat', store.getState().chat.chatId);
 
         images.forEach((image) => {
             if (image.file) {
