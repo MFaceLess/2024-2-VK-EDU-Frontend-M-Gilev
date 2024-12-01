@@ -5,10 +5,16 @@ import { addMessages, removeMessages, setMessages } from '../../redux/slices/cha
 let centrifugeInstance = null;
 let subscription;
 
-export const setupCentrifugo = (uuid) => (dispatch) => {
+export const setupCentrifugo = (uuid, saveFetch, navigate) => (dispatch) => {
+
+  const accessToken = localStorage.getItem('access');
+  if (!accessToken) {
+    navigate('/auth');
+    return;
+  }
 
   if (centrifugeInstance && subscription) {
-    return () => {};
+    return;
   }
 
   const headers = {
@@ -35,19 +41,37 @@ export const setupCentrifugo = (uuid) => (dispatch) => {
     }
   };
 
-  if (!centrifugeInstance) {
+  // if (!centrifugeInstance) {
+  //   centrifugeInstance = new Centrifuge('wss://vkedu-fullstack-div2.ru/connection/websocket/', {
+  //     getToken: (ctx) =>
+  //         new  Promise((resolve, reject)  =>
+  //         saveFetch('https://vkedu-fullstack-div2.ru/api/centrifugo/connect/', {
+  //         body: JSON.stringify(ctx),
+  //         method: 'POST',
+  //         headers: headers,
+  //       })
+  //       // .then((res) => res.json())
+  //       .then((data) => resolve(data.token))
+  //       .catch((err) => reject(err))
+  //     )
+  //   });
+
+  //   centrifugeInstance.connect();
+  // }
+
+  if (!centrifugeInstance || centrifugeInstance.status === Centrifuge.CLOSED || centrifugeInstance.status === Centrifuge.CLOSING) {
     centrifugeInstance = new Centrifuge('wss://vkedu-fullstack-div2.ru/connection/websocket/', {
-      getToken: (ctx) =>
-          new  Promise((resolve, reject)  =>
-          fetch('https://vkedu-fullstack-div2.ru/api/centrifugo/connect/', {
-          body: JSON.stringify(ctx),
-          method: 'POST',
-          headers: headers,
-        })
-        .then((res) => res.json())
-        .then((data) => resolve(data.token))
-        .catch((err) => reject(err))
-      )
+      getToken: (ctx) => {
+        return new Promise((resolve, reject) => {
+          saveFetch('https://vkedu-fullstack-div2.ru/api/centrifugo/connect/', {
+            body: JSON.stringify(ctx),
+            method: 'POST',
+            headers: headers,
+          })
+            .then((data) => resolve(data.token))
+            .catch((err) => reject(err));
+        });
+      },
     });
 
     centrifugeInstance.connect();
@@ -57,12 +81,12 @@ export const setupCentrifugo = (uuid) => (dispatch) => {
     subscription = centrifugeInstance.newSubscription(uuid, {
       getToken: (ctx) =>
         new  Promise((resolve, reject) =>
-          fetch('https://vkedu-fullstack-div2.ru/api/centrifugo/subscribe/', {
+          saveFetch('https://vkedu-fullstack-div2.ru/api/centrifugo/subscribe/', {
           body: JSON.stringify(ctx),
           method: 'POST',
           headers: headers,
         })
-        .then((res) => res.json())
+        // .then((res) => res.json())
         .then((data) => resolve(data.token))
         .catch((err) => reject(err))
       )
@@ -72,9 +96,17 @@ export const setupCentrifugo = (uuid) => (dispatch) => {
     subscription.subscribe();
   }
 
-  const unconnect = () => {
-    centrifuge.disconnect();
-    subscription.removeAllListeners();
-    subscription.unsubscribe();
+  // const unconnect = () => {
+  //   centrifuge.disconnect();
+  //   subscription.removeAllListeners();
+  //   subscription.unsubscribe();
+  // }
+}
+
+export const unconnect = async () => {
+  if (centrifugeInstance) await centrifugeInstance.disconnect();
+  if (subscription) {
+    await subscription.removeAllListeners();
+    await subscription.unsubscribe();
   }
 }

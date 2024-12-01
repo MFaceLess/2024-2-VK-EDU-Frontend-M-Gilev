@@ -56,3 +56,10 @@
     background-color: antiquewhite;
     border-radius: 8px;
 }
+
+.logoutItem:hover {
+    cursor: pointer;
+    background-color: antiquewhite;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}

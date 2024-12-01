@@ -5,6 +5,7 @@ import { fetchRegister } from '../../entityes/API/auth/fetchRegister';
 import './index.css'
 import { useDispatch } from 'react-redux';
 import { fetchAuth } from '../../entityes/API/auth/fetchAuth';
+import { toast } from 'react-toastify';
 
 export const AuthForm = forwardRef((props, ref) => {
     const navigate = useNavigate();
@@ -35,6 +36,15 @@ export const AuthForm = forwardRef((props, ref) => {
         setPasswordError('');
     }, [isLogin])
 
+    useEffect(() => {
+        if (localStorage.getItem('refresh') && localStorage.getItem('uuid')) {
+            navigate('/');
+        }
+        // if (localStorage.getItem('uuid') && localStorage.getItem('access') && localStorage.getItem('refresh')){
+        //     navigate('/');
+        // }
+    }, [])
+
     const registerUser = async () => {
         const formData = new FormData();
         formData.append('username', username);
@@ -47,7 +57,7 @@ export const AuthForm = forwardRef((props, ref) => {
         try {
             const data = await dispatch(fetchRegister(formData)).unwrap();
             localStorage.setItem('uuid', data.id);
-            alert('Пользователь успешно зарегиcтрирован!');
+            toast.success('Пользователь успешно зарегестрирован!');
         } catch (errorData) {
             console.log(errorData)
             handleErrors(JSON.parse(errorData.message));
@@ -76,7 +86,7 @@ export const AuthForm = forwardRef((props, ref) => {
     const loginUser = async () => {
         try {
             await dispatch(fetchAuth({username, password})).unwrap();
-            alert('You are logged in!');
+            toast.success('Вы успешно вошли в систему!');
             navigate('/');
         } catch (errorData) {
             setPasswordError(JSON.parse(errorData.message).detail);

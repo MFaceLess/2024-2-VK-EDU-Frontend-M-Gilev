@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 
 import { ChatSendMessageForm } from '../../components/chat-send-message-form';
 import { Message } from '../../components/chat-message';
@@ -10,13 +10,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setMessages, setChatId, setContextMenu, removeMessages} from '../../redux/slices/chatSlice';
 
 import loadingLogo from '/loadingLogo.svg'
+import sad from '/sadSmile.svg'
 
 import './index.css';
 import { fetchMessages } from '../../entityes/fetchMessages';
 import { startDialog } from '../../entityes/fetchStartDialog';
 import { setupCentrifugo } from '../../entityes/centrifuge';
+import { fetchWithAuth } from '../../entityes/API/auth/fetchWithRefresh';
 
 const Chat = () => {
+  const navigate = useNavigate();
+  const safeFetch = React.useMemo(() => {
+    return fetchWithAuth(globalThis.fetch, navigate);
+  }, [navigate])
   //Получаем id Chat
   const { id } = useParams();
   
@@ -58,14 +64,13 @@ const Chat = () => {
   }, [setIsModalOpen]);
 
   useEffect(() => {
-    fetch('https://vkedu-fullstack-div2.ru/api/chats/', {
+    safeFetch('https://vkedu-fullstack-div2.ru/api/chats/', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('access')}`,
         'Content-Type': 'application/json',
       }
     })
-      .then(response => response.json())
       .then(data => {
         const existingChat = data.results.find(chat => 
           chat.is_private && chat.members.some(member => member.id === friend.id)
@@ -79,7 +84,7 @@ const Chat = () => {
         // }
       })
       .catch(error => {
-        alert(`${error}`);
+        // alert(`${error}`);
       });
   }, [friend]);
 
@@ -96,15 +101,9 @@ const Chat = () => {
 
   useEffect(() => {
     if (!id) return;
-    dispatch(fetchMessages(id))
+    dispatch(fetchMessages({chatId: id, navigate}));
+    dispatch(setupCentrifugo(localStorage.getItem('uuid'), safeFetch, navigate));
   }, [id])
-
-
-  useEffect(() => {
-    if (id) {
-      dispatch(setupCentrifugo(localStorage.getItem('uuid')));
-    }
-  }, []);
 
   const handleDrop = (e) => {
     e.preventDefault();
@@ -207,6 +206,12 @@ const Chat = () => {
 
         {loading && <div className='loadingLogo'><img src={loadingLogo}/></div>}
 
+        {!loading && messages.length === 0 && (
+          <div className='NoMessages'>
+            {`Нет сообщений :(`}
+            <img src={sad}></img>
+          </div>
+        )}
         {!loading && chatExist && messages.map((message, index) => (
             <Message
               sender={message.sender}

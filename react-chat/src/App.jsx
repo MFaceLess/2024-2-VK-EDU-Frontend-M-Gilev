@@ -1,5 +1,7 @@
 import React from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
+import { ToastContainer} from 'react-toastify';
+import 'react-toastify/ReactToastify.css'
 
 //Импорт redux
 import { Provider } from 'react-redux'
@@ -18,6 +20,8 @@ function App() {
     <Provider store={store}>
       <HashRouter>
           <div className='app'>
+            <ToastContainer />
+
             <Routes>
               <Route path='/' element={<Messenger />} />
               <Route path='/chat/:id' element={<Chat />} />

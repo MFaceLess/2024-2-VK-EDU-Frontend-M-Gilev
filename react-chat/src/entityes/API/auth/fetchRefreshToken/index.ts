@@ -13,7 +13,8 @@ export const fetchRefresh =
         if (response.ok) {
             const data = await response.json();
             localStorage.setItem('access', data.access);
-            return true;
+            localStorage.setItem('refresh', data.refresh);
+            return data;
         }
         return false;
     }
