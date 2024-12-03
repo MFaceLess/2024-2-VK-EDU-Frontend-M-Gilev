@@ -8,10 +8,17 @@ export const fetchWithAuth = (fetchFn: typeof fetch, navigate: NavigateFunction)
         const executeFetch = async () => {            
             const response = await fetchFn(...args);
             if (!response.ok) {
+                if (response.status === 404) {
+                    return null;
+                }
                 if (response.status === 401) {
                     const refreshToken = localStorage.getItem('refresh');
                     if (refreshToken !== null) {
                         const refreshed = await fetchRefresh(refreshToken);
+                        if (!refreshed) {
+                            localStorage.clear();
+                            return null;
+                        }
                         if (refreshed) {
                             args[1] = {
                                 ...args[1],
@@ -40,6 +47,7 @@ export const fetchWithAuth = (fetchFn: typeof fetch, navigate: NavigateFunction)
             return response.json();
         } catch (error) {
             console.error('Fetch error:', error);
+            // localStorage.clear(); //чистим протухшие токены
             navigate('/auth');
         }
     };

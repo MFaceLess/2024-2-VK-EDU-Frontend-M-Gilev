@@ -34,7 +34,7 @@ const chatSlice = createSlice({
         builder
             .addCase(fetchMessages.pending, (state) => {
                 state.loading = true;
-                state.chatExist = true;
+                state.chatExist = false;
             })
             .addCase(fetchMessages.fulfilled, (state, action) => {
                 state.loading = false;
@@ -44,7 +44,7 @@ const chatSlice = createSlice({
             .addCase(fetchMessages.rejected, (state, action) => {
                 state.loading = false;
                 state.chatExist = false;
-                console.error('Error fetching messages:');
+                console.error('Error fetching messages');
             })
             .addCase(startDialog.fulfilled, (state, action) => {
                 const { id } = action.payload;

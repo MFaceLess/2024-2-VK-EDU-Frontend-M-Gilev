@@ -17,7 +17,7 @@ const AuthPage = () => {
   return (
     <div className='profile-page-wrapper'>
 
-      <HeaderProfilePage title={'Authorization'} hasRightIcon={false}/>
+      <HeaderProfilePage title={'Authorization'} hasRightIcon={false} hasBackButton={false}/>
 
       <div className='edit-profile-container'>
         {/* <img className='avatar' src={profileLinkLogo}/> */}

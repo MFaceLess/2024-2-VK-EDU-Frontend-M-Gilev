@@ -36,14 +36,11 @@ export const AuthForm = forwardRef((props, ref) => {
         setPasswordError('');
     }, [isLogin])
 
-    useEffect(() => {
-        if (localStorage.getItem('refresh') && localStorage.getItem('uuid')) {
-            navigate('/');
-        }
-        // if (localStorage.getItem('uuid') && localStorage.getItem('access') && localStorage.getItem('refresh')){
-        //     navigate('/');
-        // }
-    }, [])
+    // useEffect(() => {
+    //     if (localStorage.getItem('uuid') && localStorage.getItem('access') && localStorage.getItem('refresh')){
+    //         navigate('/');
+    //     }
+    // }, [])
 
     const registerUser = async () => {
         const formData = new FormData();
@@ -87,7 +84,7 @@ export const AuthForm = forwardRef((props, ref) => {
         try {
             await dispatch(fetchAuth({username, password})).unwrap();
             toast.success('Вы успешно вошли в систему!');
-            navigate('/');
+            // navigate('/');
         } catch (errorData) {
             setPasswordError(JSON.parse(errorData.message).detail);
             setPasswordColor('red');

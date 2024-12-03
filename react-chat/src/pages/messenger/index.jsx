@@ -86,19 +86,19 @@ const Messenger = () => {
   //   dispatch(setupCentrifugo(localStorage.getItem('uuid'), safeFetch, navigate));
   // }, [safeFetch, navigate, dispatch])
 
-  useEffect(() => {
-    const handleStorageChange = (event) => {
-      if (event.key === 'access' || event.key === 'uuid') {
-        window.location.reload();
-      }
-    };
+  // useEffect(() => {
+  //   const handleStorageChange = (event) => {
+  //     if (event.key === 'access' || event.key === 'uuid') {
+  //       window.location.reload();
+  //     }
+  //   };
 
-    window.addEventListener('storage', handleStorageChange);
+  //   window.addEventListener('storage', handleStorageChange);
 
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener('storage', handleStorageChange);
+  //   };
+  // }, []);
 
 
   return (

@@ -105,6 +105,12 @@ const Chat = () => {
     dispatch(setupCentrifugo(localStorage.getItem('uuid'), safeFetch, navigate));
   }, [id])
 
+  // useEffect(() => {
+  //   if (chatExist) {
+  //     dispatch(fetchMessages({chatId: id, navigate}));
+  //   }
+  // }, [id, chatExist])
+
   const handleDrop = (e) => {
     e.preventDefault();
     const files = Array.from(e.dataTransfer.files).slice(0, 5);

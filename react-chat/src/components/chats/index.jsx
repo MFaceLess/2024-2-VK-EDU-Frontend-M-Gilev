@@ -150,7 +150,7 @@ export const Chats = () => {
 
   const handleDeleteChat = async (chatId) => {
     try {
-      const response = await safeFetch(`https://vkedu-fullstack-div2.ru/api/chat/${chatId}`, {
+      const response = await fetch(`https://vkedu-fullstack-div2.ru/api/chat/${chatId}/`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('access')}`,
