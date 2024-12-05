@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'
 import { ConvertDateToString } from '../../entityes/utils/convertDateToString';
 import { fetchWithAuth } from '../../entityes/API/auth/fetchWithRefresh';
+import { toast } from 'react-toastify';
 
 import profileLinkLogo from '/profileLink.svg';
 
@@ -159,11 +160,12 @@ export const Chats = () => {
       });
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData?.detail || 'Ошибка при удалении сообщения');
+        throw errorData?.detail || 'Ошибка при удалении сообщения';
       }
       await fetchChatsFromApi({ page_size: 100, page: 1 });
     } catch (error) {
-      alert(error);
+      toast.error(error);
+      // alert(error);
     }
   };
 

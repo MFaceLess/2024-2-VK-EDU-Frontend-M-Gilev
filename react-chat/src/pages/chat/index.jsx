@@ -17,6 +17,7 @@ import { fetchMessages } from '../../entityes/fetchMessages';
 import { startDialog } from '../../entityes/fetchStartDialog';
 import { setupCentrifugo } from '../../entityes/centrifuge';
 import { fetchWithAuth } from '../../entityes/API/auth/fetchWithRefresh';
+import { toast } from 'react-toastify';
 
 const Chat = () => {
   const navigate = useNavigate();
@@ -180,11 +181,11 @@ const Chat = () => {
       });
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData?.detail || 'Ошибка при удалении сообщения');
+        throw errorData?.detail || 'Ошибка при удалении сообщения';
       }
       dispatch(removeMessages(messageId))
     } catch (error) {
-      alert(error);
+      toast.error(error);
     }
   };
 

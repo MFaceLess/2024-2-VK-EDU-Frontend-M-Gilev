@@ -9,6 +9,7 @@ import profileLinkLogo from '/profileLink.svg'
 import searchButtonLogo from '/searchButton.svg'
 
 import './HeaderChat.css'
+import { LazyImage } from '../lazy-image'
 
 export const HeaderChat = ({ user }) => {
     const navigate = useNavigate();
@@ -28,7 +29,8 @@ export const HeaderChat = ({ user }) => {
             </Link>
 
             <div className='profile-link'>
-              <img src={user.avatar || profileLinkLogo}/>
+              <LazyImage src={user.avatar || profileLinkLogo} />
+              {/* <img src={user.avatar || profileLinkLogo}/> */}
             </div>
 
             <div className='user-info'>

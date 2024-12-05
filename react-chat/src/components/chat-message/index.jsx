@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { ConvertDateToString } from '../../entityes/utils/convertDateToString';
 
 import './index.css'
+import { LazyImage } from '../lazy-image';
 
 export const Message = ({sender, time, text, senderId, files, voice, onContextMenu}) => {
     return (
@@ -19,7 +20,7 @@ export const Message = ({sender, time, text, senderId, files, voice, onContextMe
         {files.length > 0 && (
             <div className="message-images">
                 {files.map((file, index) => (
-                    <img key={index} src={file} alt={`image-${index}`} className="message-image" />
+                    <LazyImage key={index} src={file} alt={`image-${index}`} className="message-image" />
                 ))}
             </div>
         )}

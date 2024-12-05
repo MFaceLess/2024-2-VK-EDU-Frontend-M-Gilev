@@ -6,6 +6,7 @@ import closeButtonLogo from '/closeButton.svg';
 import profileLinkLogo from '/profileLink.svg';
 
 import './index.css'
+import { LazyImage } from '../lazy-image';
 
 export const FriendList = ({modalRef, setChatSelectionVisible}) => {
   const navigate = useNavigate();
@@ -169,7 +170,7 @@ export const FriendList = ({modalRef, setChatSelectionVisible}) => {
                     state={{friend}}
                     className='messenger-user-chat'
                   >
-                    <img className='user-avatar' src={friend.avatar || profileLinkLogo}/>
+                    <LazyImage className='user-avatar' src={friend.avatar || profileLinkLogo}/>
                     {friend.first_name} {friend.last_name}
                   </Link>
                 </li>
