@@ -3,40 +3,24 @@ import { addMessages, removeMessages, setMessages } from '../../redux/slices/cha
 
 
 let centrifugeInstance = null;
+let subscription;
 
-export const setupCentrifugo = (uuid) => (dispatch) => {
+export const setupCentrifugo = (uuid, saveFetch, navigate) => (dispatch) => {
 
-  if (centrifugeInstance) {
-    return () => {};
+  const accessToken = localStorage.getItem('access');
+  if (!accessToken) {
+    navigate('/auth');
+    return;
   }
 
-  centrifugeInstance = new Centrifuge('wss://vkedu-fullstack-div2.ru/connection/websocket/', {
-    getToken: (ctx) =>
-      fetch('https://vkedu-fullstack-div2.ru/api/centrifugo/connect/', {
-        body: JSON.stringify(ctx),
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('access')}`,
-          'Content-Type': 'application/json',
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => data.token),
-  });
+  if (centrifugeInstance && subscription) {
+    return;
+  }
 
-  const subscription = centrifugeInstance.newSubscription(uuid, {
-    getToken: (ctx) =>
-      fetch('https://vkedu-fullstack-div2.ru/api/centrifugo/subscribe/', {
-        body: JSON.stringify(ctx),
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('access')}`,
-          'Content-Type': 'application/json',
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => data.token),
-  });
+  const headers = {
+    'Authorization': `Bearer ${localStorage.getItem('access')}`,
+    'Content-Type': 'application/json',
+  }
 
   const handleCentrifugePush = (ctx) => {
     const { event, message } = ctx.data;
@@ -57,12 +41,72 @@ export const setupCentrifugo = (uuid) => (dispatch) => {
     }
   };
 
-  subscription.on('publication', handleCentrifugePush);
-  subscription.subscribe();
-  centrifugeInstance.connect();
-  
-  return () => {
-    centrifuge.disconnect();
-    centrifugeInstance = null;
+  // if (!centrifugeInstance) {
+  //   centrifugeInstance = new Centrifuge('wss://vkedu-fullstack-div2.ru/connection/websocket/', {
+  //     getToken: (ctx) =>
+  //         new  Promise((resolve, reject)  =>
+  //         saveFetch('https://vkedu-fullstack-div2.ru/api/centrifugo/connect/', {
+  //         body: JSON.stringify(ctx),
+  //         method: 'POST',
+  //         headers: headers,
+  //       })
+  //       // .then((res) => res.json())
+  //       .then((data) => resolve(data.token))
+  //       .catch((err) => reject(err))
+  //     )
+  //   });
+
+  //   centrifugeInstance.connect();
+  // }
+
+  if (!centrifugeInstance || centrifugeInstance.status === Centrifuge.CLOSED || centrifugeInstance.status === Centrifuge.CLOSING) {
+    centrifugeInstance = new Centrifuge('wss://vkedu-fullstack-div2.ru/connection/websocket/', {
+      getToken: (ctx) => {
+        return new Promise((resolve, reject) => {
+          saveFetch('https://vkedu-fullstack-div2.ru/api/centrifugo/connect/', {
+            body: JSON.stringify(ctx),
+            method: 'POST',
+            headers: headers,
+          })
+            .then((data) => resolve(data.token))
+            .catch((err) => reject(err));
+        });
+      },
+    });
+
+    centrifugeInstance.connect();
+  }
+
+  if (!subscription) {
+    subscription = centrifugeInstance.newSubscription(uuid, {
+      getToken: (ctx) =>
+        new  Promise((resolve, reject) =>
+          saveFetch('https://vkedu-fullstack-div2.ru/api/centrifugo/subscribe/', {
+          body: JSON.stringify(ctx),
+          method: 'POST',
+          headers: headers,
+        })
+        // .then((res) => res.json())
+        .then((data) => resolve(data.token))
+        .catch((err) => reject(err))
+      )
+    });
+
+    subscription.on('publication', handleCentrifugePush);
+    subscription.subscribe();
+  }
+
+  // const unconnect = () => {
+  //   centrifuge.disconnect();
+  //   subscription.removeAllListeners();
+  //   subscription.unsubscribe();
+  // }
+}
+
+export const unconnect = async () => {
+  if (centrifugeInstance) await centrifugeInstance.disconnect();
+  if (subscription) {
+    await subscription.removeAllListeners();
+    await subscription.unsubscribe();
   }
 }

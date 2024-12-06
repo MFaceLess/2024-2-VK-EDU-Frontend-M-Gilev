@@ -1,13 +1,16 @@
 import React, {useRef, useState, useEffect} from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import './index.css'
 
 export const SideBurgerMenu = ( {isBurgerMenuVisible, setBurgerMenuVisible} ) => {
+    const navigate = useNavigate();
+
     const modalRef = useRef(null);
     const [burgerMenuItems, setBurgerMenuItems] = useState([
       {label: 'Авторизация', path: '/auth'},
-      {label: 'Профиль', path: '/profile-page'}
+      {label: 'Профиль', path: '/profile-page'},
+      {label: 'Logout', path: '/auth'},
     ]);
 
     useEffect(() => {
@@ -33,6 +36,12 @@ export const SideBurgerMenu = ( {isBurgerMenuVisible, setBurgerMenuVisible} ) =>
         };
       }, [isBurgerMenuVisible]);
 
+    const handleLogout = () => {
+      localStorage.clear();
+      setBurgerMenuVisible(false);
+      navigate('/auth');
+    }
+
     return (
         <>
             {isBurgerMenuVisible && (
@@ -43,11 +52,17 @@ export const SideBurgerMenu = ( {isBurgerMenuVisible, setBurgerMenuVisible} ) =>
                 className={`burger-side-menu ${isBurgerMenuVisible ? 'visible' : ''}`}>
                 <ul>
                     {burgerMenuItems.map((menuItem, index) => (
-                        <Link to={menuItem.path} key={index}>
-                            <li>
-                                {menuItem.label}
-                            </li>
-                        </Link>
+                        menuItem.label === 'Logout' ? (
+                          <li key={index} onClick={handleLogout} className='logoutItem'>
+                              {menuItem.label}
+                          </li>
+                        ) : (
+                          <Link to={menuItem.path} key={index}>
+                              <li>
+                                  {menuItem.label}
+                              </li>
+                          </Link>
+                        )
                     ))}
                 </ul>
             </div>

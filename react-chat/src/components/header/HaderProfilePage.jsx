@@ -6,12 +6,14 @@ import backButtonLogo from '/backButton.svg';
 
 import './HeaderProfilePage.css'
 
-export const HeaderProfilePage = ( {onSubmit, title, hasRightIcon=true} ) => {
+export const HeaderProfilePage = ( {onSubmit, title, hasBackButton, hasRightIcon=true} ) => {
     return (
         <div className='profile-page-header'>
-            <Link to={'/'} className='profile-page-back-button'>
-                <img src={backButtonLogo}/>
-            </Link>
+            { hasBackButton ?? (
+                <Link to={'/'} className='profile-page-back-button'>
+                    <img src={backButtonLogo}/>
+                </Link>
+            )}
             <div className='profile-page-title'>
             <h1>{title}</h1>
             </div>

@@ -11,6 +11,10 @@ import { Chats } from '../../components/chats';
 
 
 import './index.css';
+import { fetchWithAuth } from '../../entityes/API/auth/fetchWithRefresh';
+import { useDispatch } from 'react-redux';
+import { setupCentrifugo, unconnect } from '../../entityes/centrifuge';
+
 
 const Messenger = () => {
   const navigate = useNavigate();
@@ -50,34 +54,52 @@ const Messenger = () => {
     }
   }, [chatContainerRef])
 
+  const safeFetch = React.useMemo(() => {
+    return fetchWithAuth(globalThis.fetch, navigate);
+  }, [navigate])
+
+  //Connect к websocket
+  const dispatch = useDispatch();
   useEffect(() => {
     const url = 'https://vkedu-fullstack-div2.ru/api/user/current/';
-    fetch(url, {
+    safeFetch(url, {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${localStorage.getItem('access')}`,
             'Content-Type': 'application/json',
         }
     })
-    .then((response) => {
-        if (!response.ok) {
-            return response.json().then((errorData) => {
-                if (errorData.code === 'token_not_valid') {
-                  alert(`${errorData.detail}`);
-                  navigate('/auth');
-                }
-                throw new Error(`${errorData}`);
-            });
-        }
-        return response.json();
-    })
     .then((data) => {
+      if (data) {
         localStorage.setItem('uuid', data.id);
+      }
     })
-    .catch((error) => {
-      // alert(`${error}`);
-    })
-}, [])
+
+    const timeout = setTimeout(() => {
+      dispatch(setupCentrifugo(localStorage.getItem('uuid'), safeFetch, navigate));
+    }, 5000);
+
+    return () => clearTimeout(timeout);
+  }, [])
+
+  // useEffect(() => {
+  //   dispatch(setupCentrifugo(localStorage.getItem('uuid'), safeFetch, navigate));
+  // }, [safeFetch, navigate, dispatch])
+
+  // useEffect(() => {
+  //   const handleStorageChange = (event) => {
+  //     if (event.key === 'access' || event.key === 'uuid') {
+  //       window.location.reload();
+  //     }
+  //   };
+
+  //   window.addEventListener('storage', handleStorageChange);
+
+  //   return () => {
+  //     window.removeEventListener('storage', handleStorageChange);
+  //   };
+  // }, []);
+
 
   return (
 

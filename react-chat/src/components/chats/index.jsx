@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'
-import { Centrifuge } from 'centrifuge';
 import { ConvertDateToString } from '../../entityes/utils/convertDateToString';
+import { fetchWithAuth } from '../../entityes/API/auth/fetchWithRefresh';
 
 import profileLinkLogo from '/profileLink.svg';
 
 import './index.css'
+import { useSelector } from 'react-redux';
 
 export const Chats = () => {
   const navigate = useNavigate();
@@ -14,75 +15,91 @@ export const Chats = () => {
 
   const accessToken = localStorage.getItem('access');
 
+  const safeFetch = React.useMemo(() => {
+    return fetchWithAuth(globalThis.fetch, navigate);
+  }, [navigate])
+
   const fetchChatsFromApi = async ({ page_size = 10, page = 1 }) => {
     const params = new URLSearchParams({ page_size, page });
     try {
-      const response = await fetch(`https://vkedu-fullstack-div2.ru/api/chats/?${params.toString()}`, {
+      const response = await safeFetch(`https://vkedu-fullstack-div2.ru/api/chats/?${params.toString()}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
         },
       });
-      if (!response.ok) throw new Error('Ошибка при получении списка чатов');
-      const data = await response.json();
-      setChats(data.results);
+      // console.log(response);
+      // if (!response.ok) throw new Error('Ошибка при получении списка чатов');
+      // const data = await response.json();
+      setChats(response.results);
     } catch (error) {
       navigate('/auth');
     }
   };
 
+  // const dispatch = useDispatch();
+  useEffect(() => {
+    // dispatch(setupCentrifugo(localStorage.getItem('uuid')));
+    fetchChatsFromApi({ page_size: 100, page: 1 });
+  }, [])
+
+  const messagesStore = useSelector((state) => state.chat.messages);
   useEffect(() => {
     fetchChatsFromApi({ page_size: 100, page: 1 });
+  }, [messagesStore])
+
+  // useEffect(() => {
+  //   fetchChatsFromApi({ page_size: 100, page: 1 });
     
-    const centrifuge = new Centrifuge('wss://vkedu-fullstack-div2.ru/connection/websocket/', {
-      getToken: (ctx) =>
-        fetch('https://vkedu-fullstack-div2.ru/api/centrifugo/connect/', {
-          body: JSON.stringify(ctx),
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('access')}`,
-            'Content-Type': 'application/json',
-          },
-        })
-        .then((res) => res.json())
-        .then((data) => data.token),
-    });
+  //   const centrifuge = new Centrifuge('wss://vkedu-fullstack-div2.ru/connection/websocket/', {
+  //     getToken: (ctx) =>
+  //       safeFetch('https://vkedu-fullstack-div2.ru/api/centrifugo/connect/', {
+  //         body: JSON.stringify(ctx),
+  //         method: 'POST',
+  //         headers: {
+  //           'Authorization': `Bearer ${localStorage.getItem('access')}`,
+  //           'Content-Type': 'application/json',
+  //         },
+  //       })
+  //       .then((res) => res.json())
+  //       .then((data) => data.token),
+  //   });
 
-    const subscription = centrifuge.newSubscription(localStorage.getItem('uuid'), {
-      getToken: (ctx) =>
-        fetch('https://vkedu-fullstack-div2.ru/api/centrifugo/subscribe/', {
-          body: JSON.stringify(ctx),
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('access')}`,
-            'Content-Type': 'application/json',
-          },
-        })
-        .then((res) => res.json())
-        .then((data) => data.token),
-    });
+  //   const subscription = centrifuge.newSubscription(localStorage.getItem('uuid'), {
+  //     getToken: (ctx) =>
+  //       safeFetch('https://vkedu-fullstack-div2.ru/api/centrifugo/subscribe/', {
+  //         body: JSON.stringify(ctx),
+  //         method: 'POST',
+  //         headers: {
+  //           'Authorization': `Bearer ${localStorage.getItem('access')}`,
+  //           'Content-Type': 'application/json',
+  //         },
+  //       })
+  //       .then((res) => res.json())
+  //       .then((data) => data.token),
+  //   });
 
-    subscription.on('publication', (ctx) => {
-      const { event, message } = ctx.data;
-      console.log(message);
-      console.log(event);
-      if (event === 'create') {
-        if (message) {
-          fetchChatsFromApi({ page_size: 100, page: 1 });
-        }
-      } else if (event === 'delete') {
-        fetchChatsFromApi({ page_size: 100, page: 1 });
-      }
-    });
+  //   subscription.on('publication', (ctx) => {
+  //     const { event, message } = ctx.data;
+  //     console.log(message);
+  //     console.log(event);
+  //     if (event === 'create') {
+  //       if (message) {
+  //         fetchChatsFromApi({ page_size: 100, page: 1 });
+  //       }
+  //     } else if (event === 'delete') {
+  //       fetchChatsFromApi({ page_size: 100, page: 1 });
+  //     }
+  //   });
 
-    subscription.subscribe();
-    centrifuge.connect();
+  //   subscription.subscribe();
+  //   centrifuge.connect();
 
-    return () => {
-      centrifuge.disconnect();
-    };
-  }, []);
+  //   return () => {
+  //     centrifuge.disconnect();
+  //   };
+  // }, []);
 
   const handleContextMenu = (event, chatId) => {
     event.preventDefault();
@@ -133,7 +150,7 @@ export const Chats = () => {
 
   const handleDeleteChat = async (chatId) => {
     try {
-      const response = await fetch(`https://vkedu-fullstack-div2.ru/api/chat/${chatId}`, {
+      const response = await fetch(`https://vkedu-fullstack-div2.ru/api/chat/${chatId}/`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('access')}`,
@@ -180,7 +197,11 @@ export const Chats = () => {
                 <strong className='user'>{msg.title}</strong> <small className='time-text'>{ConvertDateToString.convDateToStringFormat((new Date(msg.updated_at).toLocaleString()))}</small>
               </div>
               <small className='message-text_corrected'>
-                {msg.last_message?.text ||  (msg.last_message?.voice? 'Голосовое сообщение' : msg.last_message?.files.length !== 0 ? 'Изображения: images' : 'Нет сообщений')}
+              {msg.last_message ? (
+                msg.last_message.text || 
+                (msg.last_message.voice ? 'Голосовое сообщение' : 
+                  (msg.last_message.files.length !== 0 ? 'Изображения: images' : 'Нет сообщений'))
+              ) : 'Нет сообщений'}
               </small>
             </div>
           </div>
