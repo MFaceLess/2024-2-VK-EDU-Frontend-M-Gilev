@@ -8,6 +8,7 @@ import profileLinkLogo from '/profileLink.svg';
 
 import './index.css'
 import { useSelector } from 'react-redux';
+import { LazyImage } from '../lazy-image';
 
 export const Chats = () => {
   const navigate = useNavigate();
@@ -192,7 +193,7 @@ export const Chats = () => {
         >
           <div className='user-beep'>
             <div className='user-avatar-container'>
-              <img className='user-avatar' src={msg.avatar || profileLinkLogo}/>
+              <LazyImage className='user-avatar' src={msg.avatar || profileLinkLogo}/>
             </div>
             <div className='user-details'>
               <div className='top-container'>
