@@ -40,9 +40,7 @@ export const Chats = () => {
     }
   };
 
-  // const dispatch = useDispatch();
   useEffect(() => {
-    // dispatch(setupCentrifugo(localStorage.getItem('uuid')));
     fetchChatsFromApi({ page_size: 100, page: 1 });
   }, [])
 
@@ -50,58 +48,6 @@ export const Chats = () => {
   useEffect(() => {
     fetchChatsFromApi({ page_size: 100, page: 1 });
   }, [messagesStore])
-
-  // useEffect(() => {
-  //   fetchChatsFromApi({ page_size: 100, page: 1 });
-    
-  //   const centrifuge = new Centrifuge('wss://vkedu-fullstack-div2.ru/connection/websocket/', {
-  //     getToken: (ctx) =>
-  //       safeFetch('https://vkedu-fullstack-div2.ru/api/centrifugo/connect/', {
-  //         body: JSON.stringify(ctx),
-  //         method: 'POST',
-  //         headers: {
-  //           'Authorization': `Bearer ${localStorage.getItem('access')}`,
-  //           'Content-Type': 'application/json',
-  //         },
-  //       })
-  //       .then((res) => res.json())
-  //       .then((data) => data.token),
-  //   });
-
-  //   const subscription = centrifuge.newSubscription(localStorage.getItem('uuid'), {
-  //     getToken: (ctx) =>
-  //       safeFetch('https://vkedu-fullstack-div2.ru/api/centrifugo/subscribe/', {
-  //         body: JSON.stringify(ctx),
-  //         method: 'POST',
-  //         headers: {
-  //           'Authorization': `Bearer ${localStorage.getItem('access')}`,
-  //           'Content-Type': 'application/json',
-  //         },
-  //       })
-  //       .then((res) => res.json())
-  //       .then((data) => data.token),
-  //   });
-
-  //   subscription.on('publication', (ctx) => {
-  //     const { event, message } = ctx.data;
-  //     console.log(message);
-  //     console.log(event);
-  //     if (event === 'create') {
-  //       if (message) {
-  //         fetchChatsFromApi({ page_size: 100, page: 1 });
-  //       }
-  //     } else if (event === 'delete') {
-  //       fetchChatsFromApi({ page_size: 100, page: 1 });
-  //     }
-  //   });
-
-  //   subscription.subscribe();
-  //   centrifuge.connect();
-
-  //   return () => {
-  //     centrifuge.disconnect();
-  //   };
-  // }, []);
 
   const handleContextMenu = (event, chatId) => {
     event.preventDefault();
@@ -166,7 +112,6 @@ export const Chats = () => {
       await fetchChatsFromApi({ page_size: 100, page: 1 });
     } catch (error) {
       toast.error(error);
-      // alert(error);
     }
   };
 
@@ -186,7 +131,11 @@ export const Chats = () => {
       {messages.map((msg, index) => (
         <Link 
           to={`/chat/${msg.id}`} 
-          state={{ friend: msg.members ? msg.members.find(member => member.id !== localStorage.getItem('uuid')) : null }}
+          state={{ friend: msg.members ? msg.members.find(member => member.id !== localStorage.getItem('uuid')) : null, 
+                   title: msg.title, avatar: msg.avatar, 
+                   is_online: msg.members ? msg.members.find(member => member.id !== localStorage.getItem('uuid')).is_online : null, 
+                   last_online_at: msg.members ? msg.members.find(member => member.id !== localStorage.getItem('uuid')).last_online_at : null,
+                   isCommonChat: msg.members.length > 2 ? true : false}}
           className='message-link' 
           key={index}
           onContextMenu={(event) => handleContextMenu(event, msg.id)}

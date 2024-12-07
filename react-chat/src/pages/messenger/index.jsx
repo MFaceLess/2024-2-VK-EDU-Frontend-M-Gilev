@@ -77,7 +77,7 @@ const Messenger = () => {
 
     const timeout = setTimeout(() => {
       dispatch(setupCentrifugo(localStorage.getItem('uuid'), safeFetch, navigate));
-    }, 5000);
+    }, 1000);
 
     return () => clearTimeout(timeout);
   }, [])

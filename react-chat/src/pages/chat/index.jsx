@@ -29,6 +29,12 @@ const Chat = () => {
   
   const location = useLocation();
   const friend = location.state?.friend;
+  const title = location.state?.title;
+  const avatar = location.state?.avatar;
+  const is_online = location.state?.is_online;
+  const last_online_at = location.state?.last_online_at;
+  const isCommonChat = location.state?.isCommonChat;
+
 
   const chatContainerRef = useRef(null);
   const [images, setImages] = useState(null);
@@ -103,8 +109,16 @@ const Chat = () => {
   useEffect(() => {
     if (!id) return;
     dispatch(fetchMessages({chatId: id, navigate}));
-    dispatch(setupCentrifugo(localStorage.getItem('uuid'), safeFetch, navigate));
+    // dispatch(setupCentrifugo(localStorage.getItem('uuid'), safeFetch, navigate));
   }, [id])
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      dispatch(setupCentrifugo(localStorage.getItem('uuid'), safeFetch, navigate));
+    }, 5000);
+
+    return () => clearTimeout(timeout);
+  }, [])
 
   // useEffect(() => {
   //   if (chatExist) {
@@ -191,7 +205,7 @@ const Chat = () => {
 
   return (
     <div className='chat-page'>
-      <HeaderChat user={friend} />
+      <HeaderChat user={friend} title={title} avatar={avatar} is_online={is_online} last_online_at={last_online_at} isCommonChat={isCommonChat}/>
       {isModalOpen && (
         <div className="modal-background">
           <div className="modal-content" ref={modalRef}>
