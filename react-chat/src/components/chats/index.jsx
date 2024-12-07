@@ -133,8 +133,8 @@ export const Chats = () => {
           to={`/chat/${msg.id}`} 
           state={{ friend: msg.members ? msg.members.find(member => member.id !== localStorage.getItem('uuid')) : null, 
                    title: msg.title, avatar: msg.avatar, 
-                   is_online: msg.members ? msg.members.find(member => member.id !== localStorage.getItem('uuid')).is_online : null, 
-                   last_online_at: msg.members ? msg.members.find(member => member.id !== localStorage.getItem('uuid')).last_online_at : null,
+                   is_online: msg.members?.find(member => member.id !== localStorage.getItem('uuid'))?.is_online || null,
+                   last_online_at: msg.members?.find(member => member.id !== localStorage.getItem('uuid'))?.last_online_at || null,
                    isCommonChat: msg.members.length > 2 ? true : false}}
           className='message-link' 
           key={index}
