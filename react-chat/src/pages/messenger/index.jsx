@@ -77,29 +77,10 @@ const Messenger = () => {
 
     const timeout = setTimeout(() => {
       dispatch(setupCentrifugo(localStorage.getItem('uuid'), safeFetch, navigate));
-    }, 5000);
+    }, 1000);
 
     return () => clearTimeout(timeout);
   }, [])
-
-  // useEffect(() => {
-  //   dispatch(setupCentrifugo(localStorage.getItem('uuid'), safeFetch, navigate));
-  // }, [safeFetch, navigate, dispatch])
-
-  // useEffect(() => {
-  //   const handleStorageChange = (event) => {
-  //     if (event.key === 'access' || event.key === 'uuid') {
-  //       window.location.reload();
-  //     }
-  //   };
-
-  //   window.addEventListener('storage', handleStorageChange);
-
-  //   return () => {
-  //     window.removeEventListener('storage', handleStorageChange);
-  //   };
-  // }, []);
-
 
   return (
 

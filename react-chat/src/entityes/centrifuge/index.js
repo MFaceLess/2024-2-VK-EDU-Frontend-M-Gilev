@@ -109,4 +109,6 @@ export const unconnect = async () => {
     await subscription.removeAllListeners();
     await subscription.unsubscribe();
   }
+  centrifugeInstance = null;
+  subscription = null;
 }

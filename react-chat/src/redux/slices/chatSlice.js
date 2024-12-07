@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { fetchMessages } from "../../entityes/fetchMessages";
 import { startDialog } from "../../entityes/fetchStartDialog";
+import { toast } from "react-toastify";
 
 const initialState = {
     messages: [],
@@ -51,11 +52,11 @@ const chatSlice = createSlice({
                 state.chatExist = true;
                 state.chatId = id;
                 state.messages = [];
-                alert('Чат успешно создан!');
+                toast.info('Чат успешно создан!')
             })
             .addCase(startDialog.rejected, (state, action) => {
                 state.chatExist = false;
-                alert('Ошибка при создании чата');
+                toast.error(action.payload);
             })
     },
 });

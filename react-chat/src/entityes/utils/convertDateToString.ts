@@ -1,10 +1,17 @@
 export class ConvertDateToString {
-    public static convDateToStringFormat(dateString: string): string {
-        const [datePart, timePart] = dateString.split(', ');
-        const [day, month, year] = datePart.split('.').map(Number);
-        const [hours, minutes, seconds] = timePart.split(':').map(Number);
-
-        const date = new Date(year, month - 1, day, hours, minutes, seconds);
+    public static convDateToStringFormat(dateString: string | null = null, dateFromFormat: Date | null = null): string {
+        let date;
+        if (!dateFromFormat) {
+            const [datePart, timePart] = dateString!.split(', ');
+            const [day, month, year] = datePart.split('.').map(Number);
+            const [hours, minutes, seconds] = timePart.split(':').map(Number);
+    
+            date = new Date(year, month - 1, day, hours, minutes, seconds);
+        } else {
+            date = new Date(dateFromFormat.getFullYear(), dateFromFormat.getMonth(), 
+                            dateFromFormat.getDate(), dateFromFormat.getHours(),
+                            dateFromFormat.getMinutes(), dateFromFormat.getSeconds());
+        }
 
         let currentDay = new Date();
 

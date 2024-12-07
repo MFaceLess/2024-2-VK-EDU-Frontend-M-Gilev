@@ -6,6 +6,7 @@ import closeButtonLogo from '/closeButton.svg';
 import profileLinkLogo from '/profileLink.svg';
 
 import './index.css'
+import { LazyImage } from '../lazy-image';
 
 export const FriendList = ({modalRef, setChatSelectionVisible}) => {
   const navigate = useNavigate();
@@ -166,10 +167,12 @@ export const FriendList = ({modalRef, setChatSelectionVisible}) => {
                   ref={index === friends.length - 1 ? lastItem : null}
                 >
                   < Link to={`/chat/${friend.id}`} 
-                    state={{friend}}
+                    state={{friend, title: `${friend.first_name} ${friend.last_name}`, 
+                            avatar: friend.avatar, is_online: friend.is_online, last_online_at: friend.last_online_at,
+                            isCommonChat: false}}
                     className='messenger-user-chat'
                   >
-                    <img className='user-avatar' src={friend.avatar || profileLinkLogo}/>
+                    <LazyImage className='user-avatar' src={friend.avatar || profileLinkLogo}/>
                     {friend.first_name} {friend.last_name}
                   </Link>
                 </li>
