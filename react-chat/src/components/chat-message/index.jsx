@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { ConvertDateToString } from '../../entityes/utils/convertDateToString';
 
 import './index.css'
+
 
 export const Message = ({sender, time, text, senderId, files, voice, onContextMenu}) => {
     return (

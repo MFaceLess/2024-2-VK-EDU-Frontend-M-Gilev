@@ -17,6 +17,7 @@ import { fetchMessages } from '../../entityes/fetchMessages';
 import { startDialog } from '../../entityes/fetchStartDialog';
 import { setupCentrifugo } from '../../entityes/centrifuge';
 import { fetchWithAuth } from '../../entityes/API/auth/fetchWithRefresh';
+import { toast } from 'react-toastify';
 
 const Chat = () => {
   const navigate = useNavigate();
@@ -28,6 +29,12 @@ const Chat = () => {
   
   const location = useLocation();
   const friend = location.state?.friend;
+  const title = location.state?.title;
+  const avatar = location.state?.avatar;
+  const is_online = location.state?.is_online;
+  const last_online_at = location.state?.last_online_at;
+  const isCommonChat = location.state?.isCommonChat;
+
 
   const chatContainerRef = useRef(null);
   const [images, setImages] = useState(null);
@@ -102,8 +109,16 @@ const Chat = () => {
   useEffect(() => {
     if (!id) return;
     dispatch(fetchMessages({chatId: id, navigate}));
-    dispatch(setupCentrifugo(localStorage.getItem('uuid'), safeFetch, navigate));
+    // dispatch(setupCentrifugo(localStorage.getItem('uuid'), safeFetch, navigate));
   }, [id])
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      dispatch(setupCentrifugo(localStorage.getItem('uuid'), safeFetch, navigate));
+    }, 5000);
+
+    return () => clearTimeout(timeout);
+  }, [])
 
   // useEffect(() => {
   //   if (chatExist) {
@@ -180,17 +195,17 @@ const Chat = () => {
       });
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData?.detail || 'Ошибка при удалении сообщения');
+        throw errorData?.detail || 'Ошибка при удалении сообщения';
       }
       dispatch(removeMessages(messageId))
     } catch (error) {
-      alert(error);
+      toast.error(error);
     }
   };
 
   return (
     <div className='chat-page'>
-      <HeaderChat user={friend} />
+      <HeaderChat user={friend} title={title} avatar={avatar} is_online={is_online} last_online_at={last_online_at} isCommonChat={isCommonChat}/>
       {isModalOpen && (
         <div className="modal-background">
           <div className="modal-content" ref={modalRef}>
