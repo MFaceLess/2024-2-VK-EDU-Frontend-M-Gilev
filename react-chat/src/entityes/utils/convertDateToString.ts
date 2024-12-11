@@ -13,7 +13,7 @@ export class ConvertDateToString {
                             dateFromFormat.getMinutes(), dateFromFormat.getSeconds());
         }
 
-        let currentDay = new Date();
+        const currentDay = new Date();
 
         const today = new Date(currentDay.getFullYear(), currentDay.getMonth(), currentDay.getDate());
         const yesterday = new Date(today);

@@ -1,5 +1,6 @@
 import React, {useRef, useState, useEffect} from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import PropTypes from 'prop-types'
 
 import './index.css'
 
@@ -7,7 +8,7 @@ export const SideBurgerMenu = ( {isBurgerMenuVisible, setBurgerMenuVisible} ) =>
     const navigate = useNavigate();
 
     const modalRef = useRef(null);
-    const [burgerMenuItems, setBurgerMenuItems] = useState([
+    const [burgerMenuItems] = useState([
       {label: 'Авторизация', path: '/auth'},
       {label: 'Профиль', path: '/profile-page'},
       {label: 'Logout', path: '/auth'},
@@ -68,4 +69,9 @@ export const SideBurgerMenu = ( {isBurgerMenuVisible, setBurgerMenuVisible} ) =>
             </div>
         </>
     );
+};
+
+SideBurgerMenu.propTypes = {
+  isBurgerMenuVisible: PropTypes.bool,
+  setBurgerMenuVisible: PropTypes.func,
 };

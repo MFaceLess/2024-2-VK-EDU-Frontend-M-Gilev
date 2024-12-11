@@ -1,3 +1,5 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom'
 
 import './index.css'
@@ -42,3 +44,8 @@ export const MessageBox = ( {text, setVisible} ) => {
         </div> 
     );
 }
+
+MessageBox.propTypes = {
+    text: PropTypes.string,
+    setVisible: PropTypes.func,
+};

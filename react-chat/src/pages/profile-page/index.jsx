@@ -1,7 +1,5 @@
 import React, { useRef } from 'react'
 
-import profileLinkLogo from '/profileLink.svg';
-
 // Импорт компонентов
 import { ProfilePageForm } from '../../components/profile-page-form';
 import { HeaderProfilePage } from '../../components/header';

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 
 import store from '../../redux/store';
 
@@ -7,7 +8,7 @@ import addLogo from '/addLogo.svg'
 
 import './index.css'
 
-export const SendPhotosForm = ({ initialImages = [], chatId, setIsModalOpen }) => {
+export const SendPhotosForm = ({ initialImages = [], setIsModalOpen }) => {
     const [images, setImages] = useState(initialImages);
     const [text, setText] = useState('');
 
@@ -55,7 +56,6 @@ export const SendPhotosForm = ({ initialImages = [], chatId, setIsModalOpen }) =
                 body: formData,
             });
             if (!response.ok) throw new Error("Ошибка при отправке фото");
-            const data = await response.json();
             setIsModalOpen(false);
         } catch (error) {
             alert(`${error.message}`);
@@ -120,4 +120,9 @@ export const SendPhotosForm = ({ initialImages = [], chatId, setIsModalOpen }) =
             )}
         </>
     );
+};
+
+SendPhotosForm.propTypes = {
+    initialImages: PropTypes.array,
+    setIsModalOpen: PropTypes.func,
 };

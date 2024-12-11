@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { fetchRegister } from '../../entityes/API/auth/fetchRegister';
 
 import './index.css'
@@ -7,9 +6,7 @@ import { useDispatch } from 'react-redux';
 import { fetchAuth } from '../../entityes/API/auth/fetchAuth';
 import { toast } from 'react-toastify';
 
-export const AuthForm = forwardRef((props, ref) => {
-    const navigate = useNavigate();
-
+export const AuthForm = forwardRef((_, ref) => {
     const [isLogin, setIsLogin] = useState(true);
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -230,3 +227,5 @@ export const AuthForm = forwardRef((props, ref) => {
         </form>
     );
 });
+
+AuthForm.displayName = 'AuthForm';

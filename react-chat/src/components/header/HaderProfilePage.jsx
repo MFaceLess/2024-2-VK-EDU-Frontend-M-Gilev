@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
 import okLogo from '/ok.svg';
@@ -24,4 +25,11 @@ export const HeaderProfilePage = ( {onSubmit, title, hasBackButton, hasRightIcon
             )}
         </div>
     );
+};
+
+HeaderProfilePage.propTypes = {
+    onSubmit: PropTypes.func,
+    title: PropTypes.string,
+    hasBackButton: PropTypes.bool,
+    hasRightIcon: PropTypes.bool,
 };
