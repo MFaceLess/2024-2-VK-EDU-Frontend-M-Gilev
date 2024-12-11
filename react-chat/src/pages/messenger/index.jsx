@@ -13,7 +13,7 @@ import { Chats } from '../../components/chats';
 import './index.css';
 import { fetchWithAuth } from '../../entityes/API/auth/fetchWithRefresh';
 import { useDispatch } from 'react-redux';
-import { setupCentrifugo, unconnect } from '../../entityes/centrifuge';
+import { setupCentrifugo } from '../../entityes/centrifuge';
 
 
 const Messenger = () => {

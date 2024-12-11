@@ -16,7 +16,7 @@ export const ProfilePageForm = forwardRef((props, ref) => {
 
     const [avatarFile, setAvatarFile] = useState(null);
 
-    const [usernameColor, setUserNameColor] = useState('#ccc');
+    const [usernameColor] = useState('#ccc');
 
     const [confirmDelete, setConfirmDelete] = useState(false);
 
@@ -230,3 +230,6 @@ export const ProfilePageForm = forwardRef((props, ref) => {
         </>
     );
 });
+
+
+ProfilePageForm.displayName = 'ProfilePageForm';

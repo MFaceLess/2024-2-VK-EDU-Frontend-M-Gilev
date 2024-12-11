@@ -90,7 +90,7 @@ const Chat = () => {
         //   createChat();
         // }
       })
-      .catch(error => {
+      .catch(() => {
         // alert(`${error}`);
       });
   }, [friend]);

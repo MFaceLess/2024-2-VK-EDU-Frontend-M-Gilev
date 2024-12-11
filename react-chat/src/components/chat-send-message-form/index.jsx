@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import PropTypes from 'prop-types';
 import { useRecorder } from '../recorder';
 
 import sendButtonLogo from '/sendButton.svg'
@@ -202,4 +202,11 @@ export const ChatSendMessageForm = ({ id, setImages, setIsModalOpen }) => {
         }
       </>
     );
+};
+
+
+ChatSendMessageForm.propTypes = {
+  id: PropTypes.string,
+  setImages: PropTypes.func,
+  setIsModalOpen: PropTypes.func,
 };
