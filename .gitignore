@@ -1,2 +1,3 @@
 node_modules/
 build/
+/react-chat/ts/utils/*.js
