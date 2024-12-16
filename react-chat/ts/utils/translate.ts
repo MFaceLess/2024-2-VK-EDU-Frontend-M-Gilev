@@ -8,14 +8,14 @@ const lruCache = new LRUCache<string, IApiResponse>(100);
 
 async function fetchApiResponse(request: IApiRequest) : Promise<IApiResponse> {
   const cacheKey = `${request.query}|${request.fromLanguage}|${request.toLanguage}`;
-  const cachedResponce = lruCache.get(cacheKey);
+  const cachedResponse = lruCache.get(cacheKey);
 
-  if (cachedResponce !== null) {
-    return cachedResponce;
+  if (cachedResponse !== null) {
+    return cachedResponse;
   }
 
   const params = new URLSearchParams({
-    query:    request.query,
+    q:    request.query,
     langpair: `${request.fromLanguage}|${request.toLanguage}`,
   });
 
