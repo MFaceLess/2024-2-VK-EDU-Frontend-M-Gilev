@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 
 import burgerLogo from '/burger.svg';
 import searchButtonLogo from '/searchButton.svg';
@@ -24,4 +25,8 @@ export const HeaderChatList = ( {setBurgerMenuVisible} ) => {
             </button>
         </div>
     );
+};
+
+HeaderChatList.propTypes = {
+    setBurgerMenuVisible: PropTypes.func,
 };

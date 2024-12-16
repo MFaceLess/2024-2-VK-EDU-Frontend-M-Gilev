@@ -2,6 +2,8 @@ import React, { useEffect, useState, useRef, createRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import debounce from 'lodash.debounce'
 
+import PropTypes from 'prop-types';
+
 import closeButtonLogo from '/closeButton.svg';
 import profileLinkLogo from '/profileLink.svg';
 
@@ -65,7 +67,7 @@ export const FriendList = ({modalRef, setChatSelectionVisible}) => {
       setPagesNum(Math.ceil(Number(data.count) / page_size));
       setPage((prevPage) => prevPage + 1);
     })
-    .catch((error) => {
+    .catch(() => {
       // alert(`${error}`);
     })
   }, []);
@@ -182,4 +184,10 @@ export const FriendList = ({modalRef, setChatSelectionVisible}) => {
         </div>
       </>
   );
+};
+
+
+FriendList.propTypes = {
+  modalRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+  setChatSelectionVisible: PropTypes.func,
 };

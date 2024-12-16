@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { ConvertDateToString } from '../../entityes/utils/convertDateToString';
 
 import './index.css'
@@ -26,4 +27,14 @@ export const Message = ({sender, time, text, senderId, files, voice, onContextMe
         )}
         </div>
     );
+};
+
+Message.propTypes = {
+    sender: PropTypes.string,
+    time: PropTypes.string,
+    text: PropTypes.string,
+    senderId: PropTypes.string,
+    files: PropTypes.arrayOf(PropTypes.string),
+    voice: PropTypes.string,
+    onContextMenu: PropTypes.func,
 };
