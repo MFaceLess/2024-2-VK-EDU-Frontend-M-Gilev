@@ -1,5 +1,7 @@
 import { ErrorResponse } from "react-router-dom";
 import { toast } from "react-toastify";
+import { Enviroment } from "../Enviroment/Enviroment";
+
 
 export class API {
     private baseURL: string;
@@ -52,3 +54,6 @@ export class API {
         return this.call<T>(endpoint, 'DELETE');
     }
 }
+
+
+export const api = new API(Enviroment.baseURL);

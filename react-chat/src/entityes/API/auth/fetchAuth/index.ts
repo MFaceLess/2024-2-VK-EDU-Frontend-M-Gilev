@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { Enviroment } from '../../../Enviroment/Enviroment';
-import { API } from '../../API';
+import { api } from '../../API';
 import { toast } from 'react-toastify';
 
 
@@ -8,7 +8,6 @@ interface AuthResponse {
     refresh:    string;
     access:     string;
 }
-const api = new API(Enviroment.baseURL);
 
 export const fetchAuth = createAsyncThunk(
     'auth-form/fetchAuth',

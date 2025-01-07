@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 
 import './index.css'
 import { MessageBox } from '../message-box';
+import { toast } from 'react-toastify';
 
 export const ProfilePageForm = forwardRef((props, ref) => {
     const navigate = useNavigate();
@@ -108,7 +109,7 @@ export const ProfilePageForm = forwardRef((props, ref) => {
         })
         .then((data) => {
             console.log(data);
-            alert("Данные успешно обновлены!");
+            toast.success("Данные успешно обновлены!")
         })
         .catch((error) => {
             alert(`${error}`);
